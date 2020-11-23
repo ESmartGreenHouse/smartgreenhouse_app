@@ -84,7 +84,7 @@ class HomePage extends StatelessWidget {
           children: <Widget>[
             Text(user.email, style: textTheme.headline6),
             const SizedBox(height: 4.0),
-            Text(user.name ?? '', style: textTheme.headline5),
+            Text(user.name ?? 'Test', style: textTheme.headline5),
           ],
         ),
       ),

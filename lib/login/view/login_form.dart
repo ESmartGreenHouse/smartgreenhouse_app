@@ -4,6 +4,7 @@ import 'package:smartgreenhouse_app/login/login.dart';
 import 'package:smartgreenhouse_app/sign_up/sign_up.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:formz/formz.dart';
+import 'package:smartgreenhouse_app/theme.dart';
 
 class LoginForm extends StatelessWidget {
   @override
@@ -18,26 +19,32 @@ class LoginForm extends StatelessWidget {
             );
         }
       },
-      child: Align(
-        alignment: const Alignment(0, -1 / 3),
+      child: Center(
         child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CircleAvatar(
-                child: Text('ISD'),
+          child: Card(
+            margin: EdgeInsets.all(32.0),
+            child: Padding(
+              padding: const EdgeInsets.all(32.0),
+              child: Container(
+                width: 400,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SizedBox(height: 16.0),
+                    _EmailInput(),
+                    const SizedBox(height: 8.0),
+                    _PasswordInput(),
+                    const SizedBox(height: 32.0),
+                    _LoginButton(),
+                    const SizedBox(height: 16.0),
+                    // _GoogleLoginButton(),
+                    // const SizedBox(height: 16.0),
+                    _SignUpButton(),
+                  ],
+                ),
               ),
-              const SizedBox(height: 16.0),
-              _EmailInput(),
-              const SizedBox(height: 8.0),
-              _PasswordInput(),
-              const SizedBox(height: 8.0),
-              _LoginButton(),
-              const SizedBox(height: 8.0),
-              _GoogleLoginButton(),
-              const SizedBox(height: 4.0),
-              _SignUpButton(),
-            ],
+            ),
           ),
         ),
       ),
@@ -56,9 +63,10 @@ class _EmailInput extends StatelessWidget {
           onChanged: (email) => context.bloc<LoginCubit>().emailChanged(email),
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
-            labelText: 'email',
+            labelText: 'Email',
+            hintText: 'max.mustermann@mail.de',
             helperText: '',
-            errorText: state.email.invalid ? 'invalid email' : null,
+            errorText: state.email.invalid ? 'Invalid email' : null,
           ),
         );
       },
@@ -78,9 +86,9 @@ class _PasswordInput extends StatelessWidget {
               context.bloc<LoginCubit>().passwordChanged(password),
           obscureText: true,
           decoration: InputDecoration(
-            labelText: 'password',
-            helperText: '',
-            errorText: state.password.invalid ? 'invalid password' : null,
+            labelText: 'Password',
+            helperText: 'Please enter password\nMinimum eight characters, at least one letter and one number',
+            errorText: state.password.invalid ? 'Invalid password\nMinimum eight characters, at least one letter and one number' : null,
           ),
         );
       },
@@ -98,11 +106,13 @@ class _LoginButton extends StatelessWidget {
             ? const CircularProgressIndicator()
             : RaisedButton(
                 key: const Key('loginForm_continue_raisedButton'),
-                child: const Text('LOGIN'),
+                child: const Text('LOGIN', style: TextStyle(color: Colors.white)),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30.0),
                 ),
-                color: const Color(0xFFFFD600),
+                padding: EdgeInsets.all(16),
+                color: GreenHouseColors.green,
+                disabledColor: GreenHouseColors.black,
                 onPressed: state.status.isValidated
                     ? () => context.bloc<LoginCubit>().logInWithCredentials()
                     : null,
@@ -122,6 +132,7 @@ class _GoogleLoginButton extends StatelessWidget {
         'SIGN IN WITH GOOGLE',
         style: TextStyle(color: Colors.white),
       ),
+      padding: EdgeInsets.all(16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
       icon: const Icon(FontAwesomeIcons.google, color: Colors.white),
       color: theme.accentColor,
