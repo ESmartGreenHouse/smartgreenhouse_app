@@ -82,8 +82,8 @@ class _PasswordInput extends StatelessWidget {
           obscureText: true,
           decoration: InputDecoration(
             labelText: 'Password',
-            helperText: 'Minimum eight characters, at least one letter and one number',
-            errorText: state.password.invalid ? 'Invalid password' : null,
+            helperText: 'Please enter password\nMinimum eight characters, at least one letter and one number',
+            errorText: state.password.invalid ? 'Invalid password\nMinimum eight characters, at least one letter and one number' : null,
           ),
         );
       },
