@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartgreenhouse_app/authentication/authentication.dart';
-import 'package:smartgreenhouse_app/home/home.dart';
 
 class HomePage extends StatelessWidget {
   static Route route() {
@@ -32,7 +31,7 @@ class HomePage extends StatelessWidget {
           children: <Widget>[
             Text(user.email, style: textTheme.headline6),
             const SizedBox(height: 4.0),
-            Text(user.name ?? '', style: textTheme.headline5),
+            Text(user.name ?? 'Test', style: textTheme.headline5),
           ],
         ),
       ),
