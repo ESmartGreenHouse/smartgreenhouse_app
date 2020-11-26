@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:responsive_scaffold/templates/layout/scaffold.dart';
 import 'package:smartgreenhouse_app/authentication/authentication.dart';
+import 'package:smartgreenhouse_app/logout/logout.dart';
+import 'package:smartgreenhouse_app/menu/menu.dart';
 
 class HomePage extends StatelessWidget {
   static Route route() {
@@ -16,67 +17,42 @@ class HomePage extends StatelessWidget {
 
     return ResponsiveScaffold(
       title: Text('Home'),
-      drawer: ListView(
-        children: [
-          ListTile(
-            leading: FaIcon(FontAwesomeIcons.microchip),
-            title: Text('Devices'),
-          ),
-          ListTile(
-            leading: FaIcon(FontAwesomeIcons.microchip),
-            title: Text('Devices'),
-          ),
-          ListTile(
-            leading: FaIcon(FontAwesomeIcons.microchip),
-            title: Text('Devices'),
-          ),
-          IconButton(
-            key: const Key('homePage_logout_iconButton'),
-            icon: const Icon(Icons.exit_to_app),
-            onPressed: () => context
-                .bloc<AuthenticationBloc>()
-                .add(AuthenticationLogoutRequested()),
-          ),
-        ],
-      ),
+      drawer: AppDrawer(),
       endIcon: Icons.help,
       endDrawer: ListView(
         children: [
           ListTile(
-            leading: Icon(Icons.filter_list),
-            title: Text('Filter List'),
-            subtitle: Text('Hide and show items'),
-            trailing: Switch(
-              value: true,
-              onChanged: (val) {},
-            ),
+            leading: Icon(Icons.info),
+            title: Text('Notifications'),
+          ),
+          Divider(),
+          ListTile(
+            title: Text('Nachricht'),
+            subtitle: Text(DateTime.now().toIso8601String()),
           ),
           ListTile(
-            leading: Icon(Icons.image_aspect_ratio),
-            title: Text('Size Settings'),
-            subtitle: Text('Change size of images'),
+            title: Text('Nachricht'),
+            subtitle: Text(DateTime.now().toIso8601String()),
           ),
           ListTile(
-            title: Slider(
-              value: 0.5,
-              onChanged: (val) {},
-            ),
+            title: Text('Nachricht'),
+            subtitle: Text(DateTime.now().toIso8601String()),
           ),
           ListTile(
-            leading: Icon(Icons.sort_by_alpha),
-            title: Text('Sort List'),
-            subtitle: Text('Change layout behavior'),
-            trailing: Switch(
-              value: false,
-              onChanged: (val) {},
-            ),
+            title: Text('Nachricht'),
+            subtitle: Text(DateTime.now().toIso8601String()),
+          ),
+          ListTile(
+            title: Text('Nachricht'),
+            subtitle: Text(DateTime.now().toIso8601String()),
+          ),
+          ListTile(
+            title: Text('Nachricht'),
+            subtitle: Text(DateTime.now().toIso8601String()),
           ),
         ],
       ),
-      trailing: IconButton(
-        icon: Icon(Icons.search),
-        onPressed: () {},
-      ),
+      trailing: LogoutButton(),
       body: Align(
         alignment: const Alignment(0, -1 / 3),
         child: Column(
