@@ -4,9 +4,9 @@
 name: Deploy to Firebase Hosting (preview)
 on: 
   pull_request:
+    types: [opened, synchronize, reopened, labeled]
     branches:
         - main
-  label:
 jobs:
   build_and_preview:
     runs-on: ubuntu-latest
