@@ -6,6 +6,7 @@ on:
   pull_request:
     branches:
         - main
+  label:
 jobs:
   build_and_preview:
     runs-on: ubuntu-latest
@@ -23,7 +24,9 @@ jobs:
         with:
           name: web-build
           path: build/web
-      - uses: FirebaseExtended/action-hosting-deploy@v0
+      - if: contains(github.event.pull_request.labels.*.name, 'preview')
+        name: Deploy to Firebase preview
+        uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_ISD_SMARTGREENHOUSE }}'
