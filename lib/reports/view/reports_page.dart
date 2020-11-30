@@ -7,7 +7,10 @@ class ReportsPage extends StatelessWidget {
   const ReportsPage({Key key}) : super(key: key);
 
   static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => ReportsPage());
+    return PageRouteBuilder<MaterialPageRoute<void>>(
+      pageBuilder: (_, __, ___) => ReportsPage(),
+      transitionDuration: Duration(seconds: 0),
+    );
   }
 
   @override

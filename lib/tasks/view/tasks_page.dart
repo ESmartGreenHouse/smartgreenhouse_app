@@ -7,7 +7,10 @@ class TasksPage extends StatelessWidget {
   const TasksPage({Key key}) : super(key: key);
 
   static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => TasksPage());
+    return PageRouteBuilder<MaterialPageRoute<void>>(
+      pageBuilder: (_, __, ___) => TasksPage(),
+      transitionDuration: Duration(seconds: 0),
+    );
   }
 
   @override

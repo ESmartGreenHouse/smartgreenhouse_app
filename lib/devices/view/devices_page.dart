@@ -7,7 +7,10 @@ class DevicesPage extends StatelessWidget {
   const DevicesPage({Key key}) : super(key: key);
 
   static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => DevicesPage());
+    return PageRouteBuilder<MaterialPageRoute<void>>(
+      pageBuilder: (_, __, ___) => DevicesPage(),
+      transitionDuration: Duration(seconds: 0),
+    );
   }
 
   @override
