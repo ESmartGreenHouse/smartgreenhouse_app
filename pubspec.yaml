@@ -39,6 +39,9 @@ dependencies:
   authentication_repository:
     path: packages/authentication_repository
 
+  greenhouse_repository:
+    path: packages/greenhouse_repository
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
