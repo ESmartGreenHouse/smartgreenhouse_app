@@ -26,4 +26,12 @@ class SensorsCubit extends Cubit<SensorsState> {
       emit(SensorsLoadFailure());
     }
   }
+
+  void select(Sensor sensor) async {
+    final currentState = state;
+
+    if (currentState is SensorsLoadSuccess) {
+      emit(SensorsLoadSuccess(currentState.sensors, sensor));
+    }
+  }
 }

@@ -13,11 +13,12 @@ class SensorsLoadInProgress extends SensorsState {}
 
 class SensorsLoadSuccess extends SensorsState {
   final List<Sensor> sensors;
+  final Sensor selected;
 
-  const SensorsLoadSuccess(this.sensors);
+  const SensorsLoadSuccess(this.sensors, [this.selected]);
 
   @override
-  List<Object> get props => [sensors];
+  List<Object> get props => [sensors, selected];
 }
 
 class SensorsLoadFailure extends SensorsState {

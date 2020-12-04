@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartgreenhouse_app/sensors/sensors.dart';
+import 'package:smartgreenhouse_app/theme.dart';
 
 class SensorList extends StatelessWidget {
   const SensorList({Key key}) : super(key: key);
@@ -18,10 +19,18 @@ class SensorList extends StatelessWidget {
         if (state is SensorsLoadSuccess) {
           return ListView.builder(
             itemCount: state.sensors.length,
-            itemBuilder: (context, index) => ListTile(
-              title: Text(state.sensors.elementAt(index).name),
-              subtitle: Text(state.sensors.elementAt(index).type.toString()),
-            ),
+            itemBuilder: (context, index) {
+              final sensor = state.sensors.elementAt(index);
+              return ListTile(
+                title: Text(sensor.name),
+                subtitle: Text(sensor.type.toString()),
+                leading: IconButton(
+                  icon: Icon(sensor.name == state.selected?.name ? Icons.radio_button_checked : Icons.radio_button_unchecked, color: GreenHouseColors.green),
+                  onPressed: () => context.bloc<SensorsCubit>().select(sensor),
+                ),
+                onTap: () => context.bloc<SensorsCubit>().select(sensor),
+              );
+            },
           );
         }
         if (state is SensorsLoadFailure) {
