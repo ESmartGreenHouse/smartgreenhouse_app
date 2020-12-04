@@ -32,12 +32,13 @@ class ReportsPage extends StatelessWidget {
           children: [
             ListTile(
               title: Text('Sensors', style: TextStyle(fontWeight: FontWeight.bold)),
+              subtitle: Text('Select a sensor to display its measurement'),
             ),
             Divider(),
             Flexible(child: SensorList()),
           ],
         ),
-        body: Center(child: Text('Reports')),    
+        body: Center(child: Text('Reports')),
       ),
     );
   }
