@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:greenhouse_repository/greenhouse_repository.dart';
+import 'package:meta/meta.dart';
 
 class GreenhouseRepository {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -31,4 +32,20 @@ class GreenhouseRepository {
     }
   }
 
+  Future<List<Measurement>> getMeasurement({
+    @required String sensor,
+    @required DateTime start,
+    @required DateTime end, 
+  }) async {
+    try {
+      final result = await firestore.collection('devices').doc(deviceId).collection('sensors').doc(sensor).collection('Values').get();
+      return result.docs.map((d) => Measurement(
+        timestamp: DateTime.tryParse(d.id),
+        value: d.data()['value'] as double,
+      )).toList();
+    } catch(e) {
+      print(e);
+      return null;
+    }
+  }
 }
