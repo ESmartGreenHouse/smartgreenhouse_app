@@ -36,6 +36,8 @@ dependencies:
 
   responsive_scaffold: ^1.3.0+2
 
+  meta: ^1.2.4
+
   authentication_repository:
     path: packages/authentication_repository
 

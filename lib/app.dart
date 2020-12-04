@@ -1,6 +1,7 @@
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:greenhouse_repository/greenhouse_repository.dart';
 import 'package:smartgreenhouse_app/authentication/authentication.dart';
 import 'package:smartgreenhouse_app/home/home.dart';
 import 'package:smartgreenhouse_app/login/login.dart';
@@ -11,15 +12,21 @@ class App extends StatelessWidget {
   const App({
     Key key,
     @required this.authenticationRepository,
+    @required this.greenhouseRepository,
   })  : assert(authenticationRepository != null),
+        assert(greenhouseRepository != null),
         super(key: key);
 
   final AuthenticationRepository authenticationRepository;
+  final GreenhouseRepository greenhouseRepository;
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider.value(
-      value: authenticationRepository,
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider.value(value: authenticationRepository),
+        RepositoryProvider.value(value: greenhouseRepository),
+      ],
       child: BlocProvider(
         create: (_) => AuthenticationBloc(
           authenticationRepository: authenticationRepository,
