@@ -7,7 +7,10 @@ import 'package:smartgreenhouse_app/menu/menu.dart';
 
 class HomePage extends StatelessWidget {
   static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => HomePage());
+    return PageRouteBuilder<MaterialPageRoute<void>>(
+      pageBuilder: (_, __, ___) => HomePage(),
+      transitionDuration: Duration(seconds: 0),
+    );
   }
 
   @override

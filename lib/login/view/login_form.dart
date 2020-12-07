@@ -6,9 +6,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:formz/formz.dart';
 import 'package:smartgreenhouse_app/theme.dart';
 
-class LoginForm extends StatelessWidget {
+class LoginForm extends StatelessWidget {  
   @override
   Widget build(BuildContext context) {
+    final passwordFocusNode = FocusNode();
+
     return BlocListener<LoginCubit, LoginState>(
       listener: (context, state) {
         if (state.status.isSubmissionFailure) {
@@ -32,9 +34,9 @@ class LoginForm extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const SizedBox(height: 16.0),
-                    _EmailInput(),
+                    _EmailInput(passwordFocusNode),
                     const SizedBox(height: 8.0),
-                    _PasswordInput(),
+                    _PasswordInput(passwordFocusNode),
                     const SizedBox(height: 32.0),
                     _LoginButton(),
                     const SizedBox(height: 16.0),
@@ -53,6 +55,10 @@ class LoginForm extends StatelessWidget {
 }
 
 class _EmailInput extends StatelessWidget {
+  final FocusNode nextFocusNode;
+
+  _EmailInput(this.nextFocusNode);
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<LoginCubit, LoginState>(
@@ -60,6 +66,7 @@ class _EmailInput extends StatelessWidget {
       builder: (context, state) {
         return TextField(
           key: const Key('loginForm_emailInput_textField'),
+          autocorrect: true,
           onChanged: (email) => context.bloc<LoginCubit>().emailChanged(email),
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
@@ -68,6 +75,7 @@ class _EmailInput extends StatelessWidget {
             helperText: '',
             errorText: state.email.invalid ? 'Invalid email' : null,
           ),
+          onSubmitted: (_) => nextFocusNode.requestFocus(),
         );
       },
     );
@@ -75,6 +83,11 @@ class _EmailInput extends StatelessWidget {
 }
 
 class _PasswordInput extends StatelessWidget {
+  final FocusNode focusNode;
+
+  _PasswordInput(this.focusNode);
+
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<LoginCubit, LoginState>(
@@ -90,6 +103,10 @@ class _PasswordInput extends StatelessWidget {
             helperText: 'Please enter password\nMinimum eight characters, at least one letter and one number',
             errorText: state.password.invalid ? 'Invalid password\nMinimum eight characters, at least one letter and one number' : null,
           ),
+          onSubmitted: state.status.isValidated
+            ? (_) => context.bloc<LoginCubit>().logInWithCredentials()
+            : null,
+          focusNode: focusNode,
         );
       },
     );
