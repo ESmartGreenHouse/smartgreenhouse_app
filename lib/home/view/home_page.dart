@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:greenhouse_repository/greenhouse_repository.dart';
 import 'package:responsive_scaffold/templates/layout/scaffold.dart';
 import 'package:smartgreenhouse_app/authentication/authentication.dart';
 import 'package:smartgreenhouse_app/logout/logout.dart';
@@ -15,8 +14,6 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final user = context.bloc<AuthenticationBloc>().state.user;
-
-    final greenhouseRepository = GreenhouseRepository();
 
     return ResponsiveScaffold(
       title: Text('Home'),
@@ -65,10 +62,6 @@ class HomePage extends StatelessWidget {
             const SizedBox(height: 4.0),
             Text(user.name ?? 'Test', style: textTheme.headline5),
             const SizedBox(height: 4.0),
-            RaisedButton(
-              child: Text('Test GreenhouseRepository'),
-              onPressed: () => greenhouseRepository.test(),
-            ),
           ],
         ),
       ),
