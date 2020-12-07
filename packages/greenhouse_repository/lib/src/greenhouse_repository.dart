@@ -22,6 +22,20 @@ class GreenhouseRepository {
     }
   }
 
+  Future<List<Particle>> getParticles() async {
+    try {
+      final result = await firestore.collection('particles').get();
+      return result.docs.map<Particle>((d) => Particle(
+        id: d.data()['particle_id'] as String,
+        name: d.data()['particle_name'] as String,
+        description: d.data()['particle_description'] as String,
+      )).toList();
+    } catch(e) {
+      print(e);
+      return null;
+    }
+  }
+
   Future<List<Sensor>> getSensors() async {
     try {
       final result = await firestore.collection('devices').doc(deviceId).collection('sensors').get();

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:smartgreenhouse_app/alerts/view/view.dart';
-import 'package:smartgreenhouse_app/devices/devices.dart';
+import 'package:smartgreenhouse_app/alerts/alerts.dart';
 import 'package:smartgreenhouse_app/home/home.dart';
+import 'package:smartgreenhouse_app/particles/particles.dart';
 import 'package:smartgreenhouse_app/reports/reports.dart';
-import 'package:smartgreenhouse_app/tasks/view/view.dart';
+import 'package:smartgreenhouse_app/tasks/tasks.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({Key key}) : super(key: key);
@@ -20,8 +20,8 @@ class AppDrawer extends StatelessWidget {
         ),
         ListTile(
           leading: FaIcon(FontAwesomeIcons.microchip),
-          title: Text('Devices'),
-          onTap: () => Navigator.of(context).pushAndRemoveUntil<void>(DevicesPage.route(), (route) => false),
+          title: Text('Particles'),
+          onTap: () => Navigator.of(context).pushAndRemoveUntil<void>(ParticlesPage.route(), (route) => false),
         ),
         ListTile(
           leading: FaIcon(FontAwesomeIcons.clipboardList),
