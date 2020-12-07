@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:greenhouse_repository/greenhouse_repository.dart';
 import 'package:smartgreenhouse_app/reports/reports.dart';
+import 'package:smartgreenhouse_app/theme.dart';
 
 class PointsLineChart extends StatelessWidget {
   @override
@@ -10,6 +11,13 @@ class PointsLineChart extends StatelessWidget {
     return BlocBuilder<ReportsCubit, ReportsState>(
       builder: (context, state) {
         if (state is ReportsLoadSuccess) {
+          if (state.measurement == null || state.measurement.isEmpty) {
+            return ListTile(
+              title: Text('No measurements found for sensor at date'),
+              leading: Icon(Icons.warning, color: GreenHouseColors.orange),
+            );
+          }
+
           final seriesList = [
             charts.Series<Measurement, DateTime>(
               id: 'Measurement',
@@ -30,6 +38,18 @@ class PointsLineChart extends StatelessWidget {
         }
         if (state is ReportsLoadInProgress) {
           return LinearProgressIndicator();
+        }
+        if (state is ReportsLoadFailure) {
+          return ListTile(
+            title: Text(state.message),
+            leading: Icon(Icons.error, color: GreenHouseColors.orange),
+          );
+        }
+        if (state is ReportsLoadPending) {
+          return ListTile(
+            title: Text(state.message),
+            leading: Icon(Icons.info, color: GreenHouseColors.orange),
+          );
         }
         return Container();
       },

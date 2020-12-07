@@ -12,18 +12,52 @@ class ReportsCubit extends Cubit<ReportsState> {
     : assert(greenhouseRepository != null),
       super(ReportsInitial());
 
-  void load(Sensor sensor) async {
+  void _load(Particle particle, Sensor sensor, DateTime date) async {
     emit(ReportsLoadInProgress());
 
-    final result = await greenhouseRepository.getMeasurement(sensor: sensor.name, start: DateTime(2019), end: DateTime(2021));
+    final result = await greenhouseRepository.getRecentMeasurement(particle: particle, sensor: sensor, date: date);
     if (result != null) {
-      if (result.isNotEmpty) {
-        emit(ReportsLoadSuccess(result));
-      } else {
-        emit(ReportsLoadFailure('No measurement found'));
-      }
+      emit(ReportsLoadSuccess(
+        particle: particle,
+        sensor: sensor,
+        date: date,
+        measurement: result,
+      ));
     } else {
       emit(ReportsLoadFailure());
+    }
+  }
+
+  void date(DateTime date) async {
+    final currentState = state;
+
+    if (currentState is ReportsLoadSuccess) {
+      _load(currentState.particle, currentState.sensor, date);
+    } else if (currentState is ReportsLoadPending) {
+      if (currentState.particle == null || currentState.sensor == null) {
+        emit(ReportsLoadPending(date: date, message: 'Please select a sensor'));
+      } else {
+        _load(currentState.particle, currentState.sensor, date);
+      }
+    } else {
+      emit(ReportsLoadPending(date: date, message: 'Please select a sensor'));
+    }
+
+  }
+
+  void sensor(Particle particle, Sensor sensor) async {
+    final currentState = state;
+
+    if (currentState is ReportsLoadSuccess) {
+      _load(particle, sensor, currentState.date);
+    } else if (currentState is ReportsLoadPending) {
+      if (currentState.date == null) {
+        emit(ReportsLoadPending(particle: particle, sensor: sensor, message: 'Please select a date'));
+      } else {
+        _load(particle, sensor, currentState.date);
+      }
+    } else {
+      emit(ReportsLoadPending(particle: particle, sensor: sensor, message: 'Please select a date'));
     }
   }
 }

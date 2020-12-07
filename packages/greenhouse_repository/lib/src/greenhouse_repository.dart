@@ -37,27 +37,27 @@ class GreenhouseRepository {
     }
   }
 
-  Future<List<Sensor>> getSensors() async {
+  /// Returns the measured values of a sensor of a particle in the last day.
+  Future<List<Measurement>> getRecentMeasurement({@required Particle particle, @required Sensor sensor, @required DateTime date}) async {
     try {
-      final result = await firestore.collection('devices').doc(deviceId).collection('sensors').get();
-      return result.docs.map<Sensor>((e) => Sensor(name: e.id)).toList();
-    } catch(e) {
-      print(e);
-      return null;
-    }
-  }
+      final snapshot = await firestore.collection('data')
+        .where('particle_id', isEqualTo: particle.id)
+        .where('sensor', isEqualTo: sensor.name)
+        .where('min_timestamp', isGreaterThan: Timestamp.fromDate(date.subtract(Duration(days: 1))))
+        .where('min_timestamp', isLessThan: Timestamp.fromDate(date))
+        .get();
 
-  Future<List<Measurement>> getMeasurement({
-    @required String sensor,
-    @required DateTime start,
-    @required DateTime end, 
-  }) async {
-    try {
-      final result = await firestore.collection('devices').doc(deviceId).collection('sensors').doc(sensor).collection('Values').get();
-      return result.docs.map((d) => Measurement(
-        timestamp: DateTime.tryParse(d.id),
-        value: d.data()['value'] as double,
-      )).toList();
+      final List<Measurement> result = [];
+      for (final doc in snapshot.docs) {
+        for (final value  in doc.data()['values']) {
+          result.add(Measurement(
+            timestamp: (value['timestamp'] as Timestamp).toDate(),
+            value: value['value'] as double,
+          ));
+        }
+      }
+
+      return result;
     } catch(e) {
       print(e);
       return null;
