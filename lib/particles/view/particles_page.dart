@@ -26,10 +26,13 @@ class ParticlesPage extends StatelessWidget {
               itemCount: state.particles.length,
               itemBuilder: (context, index) {
                 final particle = state.particles.elementAt(index);
-                return ListTile(
+                return ExpansionTile(
                   leading: Icon(Icons.memory, color: GreenHouseColors.green),
                   title: Text(particle.name),
                   subtitle: Text(particle.description),
+                  children: particle.sensors.isNotEmpty
+                    ? particle.sensors.map((s) => ListTile(title: Text(s.name), subtitle: Text(s.type.toString()))).toList()
+                    : [ListTile(title: Text('No sensors found'))],
                 );
               },
               separatorBuilder: (_, __) => Divider(),

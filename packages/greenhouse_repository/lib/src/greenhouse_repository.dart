@@ -29,6 +29,7 @@ class GreenhouseRepository {
         id: d.data()['particle_id'] as String,
         name: d.data()['particle_name'] as String,
         description: d.data()['particle_description'] as String,
+        sensors: (d.data()['sensors'])?.map<Sensor>((e) => Sensor(name: e.toString()))?.toList() ?? <Sensor>[]
       )).toList();
     } catch(e) {
       print(e);
