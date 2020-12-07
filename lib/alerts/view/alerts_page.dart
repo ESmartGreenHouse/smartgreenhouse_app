@@ -7,7 +7,10 @@ class AlertsPage extends StatelessWidget {
   const AlertsPage({Key key}) : super(key: key);
 
   static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => AlertsPage());
+    return PageRouteBuilder<MaterialPageRoute<void>>(
+      pageBuilder: (_, __, ___) => AlertsPage(),
+      transitionDuration: Duration(seconds: 0),
+    );
   }
 
   @override
