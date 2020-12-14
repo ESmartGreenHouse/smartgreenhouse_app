@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:greenhouse_repository/greenhouse_repository.dart';
+import 'package:greenhouse_repository/src/providers/providers.dart';
 import 'package:meta/meta.dart';
 
 class GreenhouseRepository {
@@ -48,30 +49,12 @@ class GreenhouseRepository {
   }
 
   Future<List<Task>> getTasks() async {
-    await Future<List<Task>>.delayed(Duration(seconds: 2));
-    return [
-      Task(
-        rules: [
-          Rule(sensor: Sensor(name: 'Wind'), thresholdType: RuleThreshold.higher, threshold: 100, ruleType: RuleType.or),
-          Rule(sensor: Sensor(name: 'Rain'), thresholdType: RuleThreshold.equal, threshold: 1, ruleType: RuleType.or)
-        ],
-        actuator: Actuator(name: 'Window'),
-        action: TaskAction.turnOff,
-      ),
-      Task(
-        rules: [
-          Rule(sensor: Sensor(name: 'CO2'), thresholdType: RuleThreshold.higher, threshold: 100),
-          Rule(sensor: Sensor(name: 'Wind'), thresholdType: RuleThreshold.lower, threshold: 100),
-          Rule(sensor: Sensor(name: 'Rain'), thresholdType: RuleThreshold.equal, threshold: 0),
-        ],
-        actuator: Actuator(name: 'Window'),
-        action: TaskAction.turnOn,
-      ),
-      Task(
-        rules: [Rule(sensor: Sensor(name: 'Soil moisture'), thresholdType: RuleThreshold.lower, threshold: 100)],
-        actuator: Actuator(name: 'Window'),
-        action: TaskAction.turnOff,
-      ),
-    ];
+    final provider = MockupProvider();
+    return provider.tasks;
+  }
+
+  Future<void> updateRule(Rule rule) async {
+    final provider = MockupProvider();
+    provider.updateRule(rule);
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:greenhouse_repository/greenhouse_repository.dart';
 import 'package:smartgreenhouse_app/tasks/tasks.dart';
 import 'package:smartgreenhouse_app/theme.dart';
 
@@ -34,8 +35,9 @@ class TasksGrid extends StatelessWidget {
                           trailing: IconButton(
                             icon: Icon(Icons.edit, color: GreenHouseColors.black),
                             onPressed: () async {
-                              final result = await showDialog(context: context, builder: (_) => RuleThresholdDialog(rule: e));
+                              final result = await showDialog<Rule>(context: context, builder: (_) => RuleThresholdDialog(rule: e));
                               print(result);
+                              context.bloc<TasksCubit>().updateRule(result);
                             },
                           ),
                         )).toList(),

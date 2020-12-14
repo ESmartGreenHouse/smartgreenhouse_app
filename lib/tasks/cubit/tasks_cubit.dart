@@ -12,8 +12,10 @@ class TasksCubit extends Cubit<TasksState> {
    : assert(greenhouseRepository != null),
      super(TasksInitial());
 
-  void load() async {
-    emit(TasksLoadInProgress());
+  void load([bool indicator = true]) async {
+    if (indicator) {
+      emit(TasksLoadInProgress());
+    }
 
     final result = await greenhouseRepository.getTasks();
 
@@ -26,5 +28,10 @@ class TasksCubit extends Cubit<TasksState> {
     } else {
       emit(TasksLoadFailure());
     }
+  }
+
+  void updateRule(Rule rule) async {
+    await greenhouseRepository.updateRule(rule);
+    load(false);
   }
 }

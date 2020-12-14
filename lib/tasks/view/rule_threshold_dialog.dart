@@ -25,7 +25,9 @@ class RuleThresholdDialog extends StatelessWidget {
           child: TextFormField(
             controller: thresholdController,
             autofocus: true,
-            onFieldSubmitted: (_) => Navigator.of(context).pop(double.tryParse(thresholdController.text)),
+            onFieldSubmitted: (_) => Navigator.of(context).pop(
+              rule.copyWith(threshold: double.tryParse(thresholdController.text))
+            ),
             keyboardType: TextInputType.numberWithOptions(decimal: true),
             inputFormatters: [
               FilteringTextInputFormatter.allow(RegExp(r'(^\d*\.?\d*)'))
@@ -47,7 +49,9 @@ class RuleThresholdDialog extends StatelessWidget {
               ),
               FlatButton(
                 child: Text('Ok', style: TextStyle(color: Theme.of(context).primaryColor)),
-                onPressed: () => Navigator.of(context).pop(double.tryParse(thresholdController.text)),
+                onPressed: () => Navigator.of(context).pop(
+                  rule.copyWith(threshold: double.tryParse(thresholdController.text))
+                ),
               ),
             ],
           ),
