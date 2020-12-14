@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:greenhouse_repository/greenhouse_repository.dart';
+import 'package:smartgreenhouse_app/common/responsive_grid.dart';
 import 'package:smartgreenhouse_app/tasks/tasks.dart';
 import 'package:smartgreenhouse_app/theme.dart';
 
@@ -10,16 +11,14 @@ class TasksGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(20.0),
+      padding: const EdgeInsets.all(10.0),
       child: BlocBuilder<TasksCubit, TasksState>(
         builder: (context, state) {
           if (state is TasksLoadSuccess) {
-            return GridView.count(
-              crossAxisCount: 3,
-              shrinkWrap: true,
+            return ResponsiveGrid(
               children: List.generate(state.tasks.length, (index) {
                 return Card(
-                  margin: EdgeInsets.all(20.0),
+                  margin: EdgeInsets.all(10.0),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
