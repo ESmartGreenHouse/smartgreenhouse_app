@@ -1,9 +1,11 @@
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:greenhouse_repository/greenhouse_repository.dart';
 import 'package:smartgreenhouse_app/authentication/authentication.dart';
 import 'package:smartgreenhouse_app/home/home.dart';
 import 'package:smartgreenhouse_app/login/login.dart';
+import 'package:smartgreenhouse_app/particles/particles.dart';
 import 'package:smartgreenhouse_app/splash/splash.dart';
 import 'package:smartgreenhouse_app/theme.dart';
 
@@ -11,19 +13,34 @@ class App extends StatelessWidget {
   const App({
     Key key,
     @required this.authenticationRepository,
+    @required this.greenhouseRepository,
   })  : assert(authenticationRepository != null),
+        assert(greenhouseRepository != null),
         super(key: key);
 
   final AuthenticationRepository authenticationRepository;
+  final GreenhouseRepository greenhouseRepository;
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider.value(
-      value: authenticationRepository,
-      child: BlocProvider(
-        create: (_) => AuthenticationBloc(
-          authenticationRepository: authenticationRepository,
-        ),
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider.value(value: authenticationRepository),
+        RepositoryProvider.value(value: greenhouseRepository),
+      ],
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => AuthenticationBloc(
+              authenticationRepository: authenticationRepository,
+            ),
+          ),
+          BlocProvider(
+            create: (context) => ParticlesCubit(
+              greenhouseRepository: greenhouseRepository,
+            ),
+          ),
+        ],
         child: AppView(),
       ),
     );
@@ -51,6 +68,7 @@ class _AppViewState extends State<AppView> {
           listener: (context, state) {
             switch (state.status) {
               case AuthenticationStatus.authenticated:
+                context.bloc<ParticlesCubit>().load();
                 _navigator.pushAndRemoveUntil<void>(
                   HomePage.route(),
                   (route) => false,
