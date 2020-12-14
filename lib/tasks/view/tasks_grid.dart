@@ -31,6 +31,13 @@ class TasksGrid extends StatelessWidget {
                           title: Text('${e.sensor.name} ${e.ruleType.string()} ${e.thresholdType.string()} ${e.threshold}'),
                           subtitle: Text('Rule'),
                           leading: e.thresholdType.icon(e.ruleType.color()),
+                          trailing: IconButton(
+                            icon: Icon(Icons.edit, color: GreenHouseColors.black),
+                            onPressed: () async {
+                              final result = await showDialog(context: context, builder: (_) => RuleThresholdDialog(rule: e));
+                              print(result);
+                            },
+                          ),
                         )).toList(),
                         Divider(),
                         ListTile(
