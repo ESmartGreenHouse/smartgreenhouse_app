@@ -14,7 +14,7 @@ class TasksGrid extends StatelessWidget {
         builder: (context, state) {
           if (state is TasksLoadSuccess) {
             return GridView.count(
-              crossAxisCount: 2,
+              crossAxisCount: 3,
               shrinkWrap: true,
               children: List.generate(state.tasks.length, (index) {
                 return Card(
@@ -28,13 +28,15 @@ class TasksGrid extends StatelessWidget {
                         ),
                         Divider(),
                         ...state.tasks[index].rules.map((e) => ListTile(
-                          title: Text('${e.sensor} ${e.thresholdType} ${e.threshold}'),
-                          subtitle: Text('Rule ${e.ruleType}'),
+                          title: Text('${e.sensor.name} ${e.ruleType.string()} ${e.thresholdType.string()} ${e.threshold}'),
+                          subtitle: Text('Rule'),
+                          leading: e.thresholdType.icon(e.ruleType.color()),
                         )).toList(),
                         Divider(),
                         ListTile(
-                          title: Text('${state.tasks[index].actuator.name} ${state.tasks[index].action}'),
+                          title: Text('${state.tasks[index].actuator.name} ${state.tasks[index].action.string()}'),
                           subtitle: Text('Action'),
+                          leading: state.tasks[index].action.icon(),
                         ),
                       ],
                     ),
