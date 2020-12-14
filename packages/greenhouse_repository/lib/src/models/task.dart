@@ -17,4 +17,10 @@ class Task extends Equatable {
 
   @override
   List<Object> get props => [rules, actuator, action];
+
+  Task copyWith({List<Rule> rules}) => Task(
+    rules: rules ?? this.rules,
+    actuator: actuator,
+    action: action,
+  );
 }
