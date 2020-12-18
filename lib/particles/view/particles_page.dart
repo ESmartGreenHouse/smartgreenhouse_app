@@ -10,7 +10,10 @@ class ParticlesPage extends StatelessWidget {
   const ParticlesPage({Key key}) : super(key: key);
 
   static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => ParticlesPage());
+    return PageRouteBuilder<MaterialPageRoute<void>>(
+      pageBuilder: (_, __, ___) => ParticlesPage(),
+      transitionDuration: Duration(seconds: 0),
+    );
   }
 
   @override
