@@ -4,6 +4,7 @@ import 'package:responsive_scaffold/templates/layout/scaffold.dart';
 import 'package:smartgreenhouse_app/logout/logout.dart';
 import 'package:smartgreenhouse_app/menu/menu.dart';
 import 'package:smartgreenhouse_app/particles/particles.dart';
+import 'package:smartgreenhouse_app/particles_dialog/particles_dialog.dart';
 import 'package:smartgreenhouse_app/theme.dart';
 
 class ParticlesPage extends StatelessWidget {
@@ -55,7 +56,12 @@ class ParticlesPage extends StatelessWidget {
             leading: Icon(Icons.error, color: GreenHouseColors.orange),
           );
         },
-      )
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        backgroundColor: Theme.of(context).accentColor,
+        onPressed: () => showDialog(context: context, builder: (_) => ParticlesDialog()),
+      ),
     );
   }
 }
