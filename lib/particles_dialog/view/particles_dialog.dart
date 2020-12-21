@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:greenhouse_repository/greenhouse_repository.dart';
+import 'package:smartgreenhouse_app/authentication/authentication.dart';
 import 'package:smartgreenhouse_app/particles_dialog/particles_dialog.dart';
 
 class ParticlesDialog extends StatelessWidget {
@@ -7,7 +9,10 @@ class ParticlesDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ParticlesDialogCubit(),
+      create: (context) => ParticlesDialogCubit(
+        greenhouseRepository: context.repository<GreenhouseRepository>(),
+        authenticationBloc: context.bloc<AuthenticationBloc>(),
+      ),
       child: _Dialog(),
     );
   }

@@ -1,12 +1,23 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart';
+import 'package:greenhouse_repository/greenhouse_repository.dart';
+import 'package:meta/meta.dart';
+import 'package:smartgreenhouse_app/authentication/authentication.dart';
 import 'package:smartgreenhouse_app/particles_dialog/particles_dialog.dart';
 
 part 'particles_dialog_state.dart';
 
 class ParticlesDialogCubit extends Cubit<ParticlesDialogState> {
-  ParticlesDialogCubit() : super(ParticlesDialogState());
+  final GreenhouseRepository greenhouseRepository;
+  final AuthenticationBloc authenticationBloc;
+
+  ParticlesDialogCubit({
+    @required this.greenhouseRepository,
+    @required this.authenticationBloc,
+  }) : assert(greenhouseRepository != null),
+       assert(authenticationBloc != null),
+       super(ParticlesDialogState());
 
   void nameChanged(String value) {
     final name = ParticleName.dirty(value);
@@ -37,9 +48,18 @@ class ParticlesDialogCubit extends Cubit<ParticlesDialogState> {
 
     emit(state.copyWith(status: FormzStatus.submissionInProgress));
 
-    // TODO Add Particle
-    print('ADD PARTICLE');
+    final result = await greenhouseRepository.addParticle(Particle(
+      id: state.mac.value,
+      name: state.name.value,
+      description: state.description.value,
+      ownerUid: authenticationBloc.state.user.id,
+      sensors: [],
+    ));
 
-    emit(state.copyWith(status: FormzStatus.submissionSuccess));
+    if (result) {
+      emit(state.copyWith(status: FormzStatus.submissionSuccess));
+    } else {
+      emit(state.copyWith(status: FormzStatus.submissionFailure));
+    }
   }
 }
