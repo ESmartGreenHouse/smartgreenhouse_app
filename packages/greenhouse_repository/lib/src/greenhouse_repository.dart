@@ -5,9 +5,13 @@ import 'package:meta/meta.dart';
 class GreenhouseRepository {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  Future<List<Particle>> getParticles() async {
+  Future<List<Particle>> getParticles(String uid) async {
+
     try {
-      final result = await firestore.collection('particles').get();
+      final result = await firestore.collection('particles')
+        .where('read_uid', arrayContains: uid)
+        .get();
+
       return result.docs.map<Particle>((d) => Particle(
         id: d.data()['particle_id'] as String,
         name: d.data()['particle_name'] as String,

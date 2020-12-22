@@ -38,6 +38,7 @@ class App extends StatelessWidget {
           BlocProvider(
             create: (context) => ParticlesCubit(
               greenhouseRepository: greenhouseRepository,
+              authenticationBloc: context.bloc<AuthenticationBloc>(),
             ),
           ),
         ],
