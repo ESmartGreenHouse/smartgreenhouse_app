@@ -1,0 +1,23 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "data",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "particle_id",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "sensor",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "min_timestamp",
+          "order": "ASCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

@@ -1,0 +1,18 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /particles/{document=**} {
+    	allow read: if 
+      	request.auth != null && 
+        request.auth.uid in resource.data.read_uid;
+      allow write:  if
+      	request.auth != null &&
+      	request.auth.uid in resource.data.write_uid;
+    }
+    match /data/{point} {
+    	allow read: if 
+      	request.auth.uid != null &&
+        request.auth.uid in get(/databases/$(database)/documents/particles/$(resource.data.particle_id)).data.read_uid
+  	}
+  }
+}
