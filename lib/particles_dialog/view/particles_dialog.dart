@@ -41,6 +41,9 @@ class _Dialog extends StatelessWidget {
         if (state.status == FormzStatus.submissionSuccess) {
           Navigator.of(context).pop(true);
         }
+        if (state.status == FormzStatus.submissionFailure) {
+          Navigator.of(context).pop(false);
+        }
       },
       child: SimpleDialog(
         title: Text('Particle'),
@@ -106,7 +109,7 @@ class _Dialog extends StatelessWidget {
               children: <Widget>[
                 FlatButton(
                   child: Text('CANCEL', style: TextStyle(color: Theme.of(context).primaryColor)),
-                  onPressed: () => Navigator.of(context).pop(false),
+                  onPressed: () => Navigator.of(context).pop(),
                 ),
                 FlatButton(
                   child: Text('OK', style: TextStyle(color: Theme.of(context).primaryColor)),

@@ -2,27 +2,19 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    function particleReadUser() {
-      return request.auth != null && request.auth.uid in resource.data.read_uid;
-    }
-
-    function particleWriteUser() {
-      return request.auth != null && request.auth.uid in resource.data.write_uid;
-    }
-
-    function adminUser() {
-      return request.auth != null && request.auth.uid in get(/databases/$(database)/documents/config/user).data.admin
-    }
-
     match /particles/{document=**} {
-    	allow read: if particleReadUser()
-      allow write: if particleWriteUser() || adminUser()
+    	allow read: if request.auth != null && request.auth.uid in resource.data.read_uid
+      allow create: if request.auth != null && request.auth.uid in get(/databases/$(database)/documents/config/user).data.admin
+      allow update: if request.auth != null && request.auth.uid in resource.data.write_uid
+      allow delete: if request.auth != null && request.auth.uid == resource.data.owner_uid
     }
+
     match /data/{point} {
-    	allow read: if 
+    	allow read: if
       	request.auth.uid != null &&
         request.auth.uid in get(/databases/$(database)/documents/particles/$(resource.data.particle_id)).data.read_uid
   	}
+
     match /config/{document=**} {
       allow read: if false
       allow write: if false

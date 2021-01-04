@@ -9,7 +9,7 @@ import 'package:smartgreenhouse_app/particles_dialog/particles_dialog.dart';
 import 'package:smartgreenhouse_app/theme.dart';
 
 class ParticlesPage extends StatelessWidget {
-  const ParticlesPage({Key key}) : super(key: key);
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   static Route route() {
     return PageRouteBuilder<MaterialPageRoute<void>>(
@@ -21,6 +21,7 @@ class ParticlesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ResponsiveScaffold(
+      scaffoldKey: _scaffoldKey,
       title: Text('Particles'),
       drawer: AppDrawer(),
       trailing: Row(
@@ -57,6 +58,13 @@ class ParticlesPage extends StatelessWidget {
                               id: particle.id,
                             ));
                             if (result == true) context.bloc<ParticlesCubit>().load();
+                            if (result == false) {
+                              _scaffoldKey.currentState
+                                ..hideCurrentSnackBar()
+                                ..showSnackBar(
+                                  const SnackBar(content: Text('Failed to edit particle')),
+                                );
+                            }
                           },
                         ),
                       ),
@@ -134,6 +142,13 @@ class ParticlesPage extends StatelessWidget {
         onPressed: () async {
           final result = await showDialog(context: context, builder: (_) => ParticlesDialog());
           if (result == true) context.bloc<ParticlesCubit>().load();
+          if (result == false) {
+            _scaffoldKey.currentState
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                const SnackBar(content: Text('Failed to add particle. Particles could only be added by admins during devlopment.')),
+              );
+          }
         },
       ),
     );
