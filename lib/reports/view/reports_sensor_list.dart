@@ -13,7 +13,7 @@ class ReportsSensorList extends StatelessWidget {
       child: BlocBuilder<ParticlesCubit, ParticlesState>(
         builder: (context, state) {
           if (state is ParticlesLoadSuccess) {
-            return ListView.separated(
+            return ListView.builder(
               itemCount: state.particles.length,
               itemBuilder: (context, index) {
                 final particle = state.particles.elementAt(index);
@@ -59,7 +59,6 @@ class ReportsSensorList extends StatelessWidget {
                     : [ListTile(title: Text('No sensors found'))],
                 );
               },
-              separatorBuilder: (_, __) => Divider(),
             );
           }
           if (state is ParticlesLoadInProgress) {
