@@ -44,6 +44,16 @@ class GreenhouseRepository {
     }
   }
 
+  Future<bool> deleteParticle(Particle particle) async {
+    try {
+      await firestore.collection('particles').doc(particle.id).delete();
+      return true;
+    } catch(e) {
+      print(e);
+      return false;
+    }
+  }
+
   /// Returns the measured values of a sensor of a particle in the last day.
   Future<List<Measurement>> getRecentMeasurement({@required Particle particle, @required Sensor sensor, @required DateTime date}) async {
     try {

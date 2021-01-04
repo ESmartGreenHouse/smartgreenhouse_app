@@ -46,6 +46,26 @@ class ParticlesPage extends StatelessWidget {
                   subtitle: Text(particle.description),
                   children: [
                     Divider(),
+                    ...(particle.ownerUid == context.bloc<AuthenticationBloc>().state.user.id ? [
+                      ListTile(
+                        title: Text('Delete Particle'),
+                        leading: IconButton(
+                          icon: Icon(Icons.delete, color: GreenHouseColors.black),
+                          onPressed: () async {
+                            final result = await showDialog(context: context, builder: (context) => AlertDialog(
+                              title: Text('Delete Particle'),
+                              content: Text('Are you sure, you want to delete ${particle.name}?'),
+                              actions: [
+                                FlatButton(child: Text('No', style: TextStyle(color: GreenHouseColors.orange)), onPressed: () => Navigator.of(context).pop(false)),
+                                FlatButton(child: Text('Yes', style: TextStyle(color: GreenHouseColors.orange)), onPressed: () => Navigator.of(context).pop(true)),
+                              ],
+                            ));
+                            if (result == true) context.bloc<ParticlesCubit>().deleteParticle(particle);
+                          },
+                        ),
+                      ),
+                      Divider(),
+                    ] : [Container()]),
                     ...(particle.writeUids.contains(context.bloc<AuthenticationBloc>().state.user.id) ? [
                       ListTile(
                         title: Text('Edit name and description'),
@@ -62,7 +82,7 @@ class ParticlesPage extends StatelessWidget {
                               _scaffoldKey.currentState
                                 ..hideCurrentSnackBar()
                                 ..showSnackBar(
-                                  const SnackBar(content: Text('Failed to edit particle')),
+                                  const SnackBar(content: Text('Failed to edit Particle')),
                                 );
                             }
                           },

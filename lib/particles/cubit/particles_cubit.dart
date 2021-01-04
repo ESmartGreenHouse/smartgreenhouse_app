@@ -52,4 +52,9 @@ class ParticlesCubit extends Cubit<ParticlesState> {
     await greenhouseRepository.addOrUpdateParticle(particle.copyWith(writeUids: particle.writeUids..removeWhere((u) => u == uuid)));
     load();
   }
+
+  void deleteParticle(Particle particle) async {
+    await greenhouseRepository.deleteParticle(particle);
+    load();
+  }
 }
