@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:bloc/bloc.dart';
+import 'package:crypto/crypto.dart';
 import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart';
 import 'package:greenhouse_repository/greenhouse_repository.dart';
@@ -15,15 +18,23 @@ class ParticlesDialogCubit extends Cubit<ParticlesDialogState> {
   ParticlesDialogCubit({
     @required this.greenhouseRepository,
     @required this.authenticationBloc,
+    String name,
+    String description,
+    String id,
   }) : assert(greenhouseRepository != null),
        assert(authenticationBloc != null),
-       super(ParticlesDialogState());
+       super(ParticlesDialogState(
+         id: id,
+         name: name != null ? ParticleName.dirty(name) : ParticleName.pure(),
+         description: description != null ? ParticleDescription.dirty(description) : ParticleDescription.pure(),
+         status: FormzStatus.valid,
+       ));
 
   void nameChanged(String value) {
     final name = ParticleName.dirty(value);
     emit(state.copyWith(
       name: name,
-      status: Formz.validate([name, state.description, state.mac])
+      status: Formz.validate([name, state.description]..addAll(state.id == null ? [state.mac] : []))
     ));
   }
 
@@ -31,7 +42,7 @@ class ParticlesDialogCubit extends Cubit<ParticlesDialogState> {
     final description = ParticleDescription.dirty(value);
     emit(state.copyWith(
       description: description,
-      status: Formz.validate([state.name, description, state.mac])
+      status: Formz.validate([state.name, description]..addAll(state.id == null ? [state.mac] : []))
     ));
   }
 
@@ -48,12 +59,14 @@ class ParticlesDialogCubit extends Cubit<ParticlesDialogState> {
 
     emit(state.copyWith(status: FormzStatus.submissionInProgress));
 
-    final result = await greenhouseRepository.addParticle(Particle(
-      id: state.mac.value,
+    final result = await greenhouseRepository.addOrUpdateParticle(Particle(
+      id: state.id ?? sha256.convert(utf8.encode(state.mac.value)).toString(),
       name: state.name.value,
       description: state.description.value,
       ownerUid: authenticationBloc.state.user.id,
       sensors: [],
+      readUids: [authenticationBloc.state.user.id],
+      writeUids: [authenticationBloc.state.user.id],
     ));
 
     if (result) {

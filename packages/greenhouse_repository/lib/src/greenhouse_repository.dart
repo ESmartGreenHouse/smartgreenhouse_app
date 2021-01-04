@@ -15,9 +15,11 @@ class GreenhouseRepository {
       return result.docs.map<Particle>((d) => Particle(
         id: d.data()['particle_id'] as String,
         name: d.data()['particle_name'] as String,
-        description: d.data()['particle_description'] as String,
+        description: d.data()['particle_description'] as String ?? '',
         ownerUid: d.data()['owner_uid'] as String,
-        sensors: (d.data()['sensors'])?.map<Sensor>((e) => Sensor(name: e.toString()))?.toList() ?? <Sensor>[]
+        sensors: (d.data()['sensors'])?.map<Sensor>((e) => Sensor(name: e.toString()))?.toList() ?? <Sensor>[],
+        readUids: (d.data()['read_uid'])?.map<String>((e) => e.toString())?.toList() ?? <String>[],
+        writeUids: (d.data()['write_uid'])?.map<String>((e) => e.toString())?.toList() ?? <String>[],
       )).toList();
     } catch(e) {
       print(e);
@@ -25,13 +27,15 @@ class GreenhouseRepository {
     }
   }
 
-  Future<bool> addParticle(Particle particle) async {
+  Future<bool> addOrUpdateParticle(Particle particle) async {
     try {
       await firestore.collection('particles').doc(particle.id).set({
         'particle_id': particle.id,
         'particle_name': particle.name,
-        'particle_description ': particle.description ?? '',
+        'particle_description': particle.description ?? '',
         'owner_uid': particle.ownerUid,
+        'read_uid': particle.readUids,
+        'write_uid': particle.writeUids,
       });
       return true;
     } catch(e) {

@@ -26,10 +26,30 @@ class ParticlesCubit extends Cubit<ParticlesState> {
       if (result.isNotEmpty) {
         emit(ParticlesLoadSuccess(result));
       } else {
-        emit(ParticlesLoadFailure('No particles found'))
-;      }
+        emit(ParticlesLoadFailure('No particles found'));
+      }
     } else {
       emit(ParticlesLoadFailure());
     }
+  }
+
+  void addReadUser(Particle particle, String uuid) async {
+    await greenhouseRepository.addOrUpdateParticle(particle.copyWith(readUids: particle.readUids..add(uuid)));
+    load();
+  }
+
+  void removeReadUser(Particle particle, String uuid) async {
+    await greenhouseRepository.addOrUpdateParticle(particle.copyWith(readUids: particle.readUids..removeWhere((u) => u == uuid)));
+    load();
+  }
+
+  void addWriteUser(Particle particle, String uuid) async {
+    await greenhouseRepository.addOrUpdateParticle(particle.copyWith(writeUids: particle.writeUids..add(uuid)));
+    load();
+  }
+
+  void removeWriteUser(Particle particle, String uuid) async {
+    await greenhouseRepository.addOrUpdateParticle(particle.copyWith(writeUids: particle.writeUids..removeWhere((u) => u == uuid)));
+    load();
   }
 }
