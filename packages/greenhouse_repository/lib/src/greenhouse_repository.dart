@@ -89,9 +89,29 @@ class GreenhouseRepository {
     }
   }
 
-  Future<void> shareParticleData(Particle particle, [bool share = false]) async {
+  Future<void> shareParticleData(Particle particle) async {
     try {
-      await firestore.collection('particles').doc(particle.id).set({'shared': share}, SetOptions(merge: true));
+      await firestore.collection('particles').doc(particle.id).set({'shared': particle.isShared}, SetOptions(merge: true));
+    } catch(e) {
+      print(e);
+    }
+  }
+
+  Future<void> renameParticle(Particle particle) async {
+    try {
+      await Dio().put('https://api.particle.io/v1/devices/${particle.id}', data: {
+        'name': particle.name,
+      }, options: Options(headers: { 'Authorization': 'Bearer ${await authenticationRepository.token}'}));
+    } catch(e) {
+      print(e);
+    }
+  }
+
+  Future<void> changeParticleNotes(Particle particle) async {
+    try {
+      await Dio().put('https://api.particle.io/v1/devices/${particle.id}', data: {
+        'notes': particle.notes,
+      }, options: Options(headers: { 'Authorization': 'Bearer ${await authenticationRepository.token}'}));
     } catch(e) {
       print(e);
     }

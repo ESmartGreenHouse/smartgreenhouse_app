@@ -23,4 +23,14 @@ class Particle extends Equatable {
 
   @override
   List<Object> get props => [id, name, notes, lastHeard, isShared, isOwned, sensors];
+
+  Particle copyWith({String name, String notes, bool isShared}) => Particle(
+    id: id,
+    name: name ?? this.name,
+    notes: notes ?? this.notes,
+    lastHeard: lastHeard,
+    isShared: isShared ?? this.isShared,
+    isOwned: isOwned,
+    sensors: sensors,
+  );
 }

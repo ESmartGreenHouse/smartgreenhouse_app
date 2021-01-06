@@ -37,7 +37,19 @@ class ParticlesCubit extends Cubit<ParticlesState> {
 
   void shareParticle(Particle particle, bool share) async {
     emit(ParticlesLoadInProgress());
-    await greenhouseRepository.shareParticleData(particle, share);
+    await greenhouseRepository.shareParticleData(particle.copyWith(isShared: share));
     load();
+  }
+
+  void renameParticle(Particle particle, String name) async {
+    emit(ParticlesLoadInProgress());
+    await greenhouseRepository.renameParticle(particle.copyWith(name: name));
+    syncParticleCloud();
+  }
+
+  void changeParticleNotes(Particle particle, String notes) async {
+    emit(ParticlesLoadInProgress());
+    await greenhouseRepository.changeParticleNotes(particle.copyWith(notes: notes));
+    syncParticleCloud();
   }
 }
