@@ -8,11 +8,11 @@ class LogoutButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      key: const Key('homePage_logout_iconButton'),
+      tooltip: 'Logout',
       icon: const Icon(Icons.exit_to_app),
       onPressed: () => context
-          .bloc<AuthenticationBloc>()
-          .add(AuthenticationLogoutRequested()),
+        .bloc<AuthenticationBloc>()
+        .add(AuthenticationLogoutRequested()),
     );
   }
 }

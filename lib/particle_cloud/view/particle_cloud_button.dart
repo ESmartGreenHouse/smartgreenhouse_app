@@ -12,14 +12,16 @@ class ParticleCloudButton extends StatelessWidget {
       builder: (context, state) {
         if (state.user.isCloudLinked) {
           return IconButton(
+            tooltip: 'Remove Particle Cloud link',
             icon: Icon(Icons.cloud),
             onPressed: () => Navigator.of(context).push(ParticleCloudPage.route(isLinked: true)),
           );
         }
         return IconButton(
-            icon: Icon(Icons.cloud_off),
-            onPressed: () => Navigator.of(context).push(ParticleCloudPage.route(isLinked: false)),
-          );
+          tooltip: 'Link Particle Cloud',
+          icon: Icon(Icons.cloud_off),
+          onPressed: () => Navigator.of(context).push(ParticleCloudPage.route(isLinked: false)),
+        );
       },
     );
   }
