@@ -44,7 +44,7 @@ class GreenhouseRepository {
           id: d['id'] as String,
           name: d['name'] as String,
           notes: d['notes'] as String ?? '',
-          isShared: d['shared'] as bool,
+          isShared: d['shared'] as bool ?? false,
           isOwned: true,
         ))
         .toList();
@@ -58,7 +58,7 @@ class GreenhouseRepository {
           id: d['id'] as String,
           name: d['name'] as String,
           notes: d['notes'] as String ?? '',
-          isShared: d['shared'] as bool,
+          isShared: d['shared'] as bool ?? false,
           isOwned: false,
         ))
         .toList();
