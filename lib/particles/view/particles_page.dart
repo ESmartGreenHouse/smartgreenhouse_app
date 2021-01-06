@@ -4,8 +4,8 @@ import 'package:responsive_scaffold/templates/layout/scaffold.dart';
 import 'package:smartgreenhouse_app/authentication/authentication.dart';
 import 'package:smartgreenhouse_app/logout/logout.dart';
 import 'package:smartgreenhouse_app/menu/menu.dart';
+import 'package:smartgreenhouse_app/particle_cloud/particle_cloud.dart';
 import 'package:smartgreenhouse_app/particles/particles.dart';
-import 'package:smartgreenhouse_app/particles_dialog/particles_dialog.dart';
 import 'package:smartgreenhouse_app/theme.dart';
 
 class ParticlesPage extends StatelessWidget {
@@ -30,6 +30,12 @@ class ParticlesPage extends StatelessWidget {
             icon: Icon(Icons.refresh),
             onPressed: () => context.bloc<ParticlesCubit>().load(),
           ),
+          IconButton(
+            icon: Icon(context.bloc<AuthenticationBloc>().state.user.isCloudLinked ? Icons.sync : Icons.sync_disabled),
+            disabledColor: GreenHouseColors.orange,
+            onPressed: context.bloc<AuthenticationBloc>().state.user.isCloudLinked ? () => context.bloc<ParticlesCubit>().syncParticleCloud() : null,
+          ),
+          ParticleCloudButton(),
           LogoutButton(),
         ],
       ),
@@ -45,93 +51,26 @@ class ParticlesPage extends StatelessWidget {
                   child: Column(
                     children: [
                       ListTile(
-                        leading: Icon(Icons.memory, color: GreenHouseColors.green),
-                        title: Text(particle.name),
-                        subtitle: Text(particle.description),
+                        leading: particle.isOwned ? Icon(Icons.person, color: GreenHouseColors.green) : Icon(Icons.person_outline, color: GreenHouseColors.black),
+                        title: Text(particle.isOwned ? 'Owned' : 'Shared'),
                       ),
                       Divider(),
-                      particle.ownerUid == context.bloc<AuthenticationBloc>().state.user.id ? ListTile(
-                        title: Text('Delete Particle'),
-                        leading: Icon(Icons.delete, color: GreenHouseColors.black),
-                        onTap: () async {
-                          final result = await showDialog(context: context, builder: (context) => AlertDialog(
-                            title: Text('Delete Particle'),
-                            content: Text('Are you sure, you want to delete ${particle.name}?'),
-                            actions: [
-                              FlatButton(child: Text('No', style: TextStyle(color: GreenHouseColors.orange)), onPressed: () => Navigator.of(context).pop(false)),
-                              FlatButton(child: Text('Yes', style: TextStyle(color: GreenHouseColors.orange)), onPressed: () => Navigator.of(context).pop(true)),
-                            ],
-                          ));
-                          if (result == true) context.bloc<ParticlesCubit>().deleteParticle(particle);
-                        },
-                      ) : Container(),
-                      particle.writeUids.contains(context.bloc<AuthenticationBloc>().state.user.id) ? ListTile(
-                        title: Text('Edit name and description'),
-                        leading: Icon(Icons.edit, color: GreenHouseColors.black),
-                        onTap: () async {
-                          final result = await showDialog(context: context, builder: (_) => ParticlesDialog(
-                            name: particle.name,
-                            description: particle.description,
-                            id: particle.id,
-                          ));
-                          if (result == true) context.bloc<ParticlesCubit>().load();
-                          if (result == false) {
-                            _scaffoldKey.currentState
-                              ..hideCurrentSnackBar()
-                              ..showSnackBar(
-                                const SnackBar(content: Text('Failed to edit Particle')),
-                              );
-                          }
-                        },
-                      ) : Container(),
-                      Theme(
-                        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-                        child: ExpansionTile(
-                          leading: Icon(Icons.people, color: GreenHouseColors.black),
-                          title: Text('Users'),
-                          subtitle: Text('Change User access'),
-                          children: [
-                            ListTile(
-                              title: Text('Read', style: TextStyle(fontWeight: FontWeight.bold)),
-                              leading: context.bloc<AuthenticationBloc>().state.user.id == particle.ownerUid ? IconButton(
-                                icon: Icon(Icons.add_circle_outline),
-                                color: GreenHouseColors.black,
-                                onPressed: () async {
-                                  final value = await showDialog<String>(context: context, builder: (context) => UidDialog());
-                                  context.bloc<ParticlesCubit>().addReadUser(particle, value);
-                                },
-                              ) : null,
-                            ),
-                            ...particle.readUids.map<ListTile>((e) => ListTile(
-                              title: Text(e),
-                              leading: context.bloc<AuthenticationBloc>().state.user.id == particle.ownerUid ? IconButton(
-                                icon: Icon(Icons.delete),
-                                color: GreenHouseColors.black,
-                                onPressed: () => context.bloc<ParticlesCubit>().removeReadUser(particle, e),
-                              ) : null,
-                            )).toList(),
-                            Divider(),
-                            ListTile(
-                              title: Text('Write', style: TextStyle(fontWeight: FontWeight.bold)),
-                              leading: context.bloc<AuthenticationBloc>().state.user.id == particle.ownerUid ? IconButton(
-                                icon: Icon(Icons.add_circle_outline),
-                                color: GreenHouseColors.black,
-                                onPressed: () async {
-                                  final value = await showDialog<String>(context: context, builder: (_) => UidDialog());
-                                  context.bloc<ParticlesCubit>().addWriteUser(particle, value);
-                                },
-                              ) : null,
-                            ),
-                            ...particle.writeUids.map<ListTile>((e) => ListTile(
-                              title: Text(e),
-                              leading: context.bloc<AuthenticationBloc>().state.user.id == particle.ownerUid ? IconButton(
-                                icon: Icon(Icons.delete),
-                                color: GreenHouseColors.black,
-                                onPressed: () => context.bloc<ParticlesCubit>().removeWriteUser(particle, e),
-                              ) : null,
-                            )).toList(),
-                          ],
-                        ),
+                      ListTile(
+                        leading: Icon(Icons.memory, color: GreenHouseColors.green),
+                        title: Text(particle.name),
+                        subtitle: Text(particle.id),
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.notes, color: GreenHouseColors.black),
+                        title: Text(particle.notes),
+                        subtitle: Text('Notes'),
+                      ),
+                      Divider(),
+                      ListTile(
+                        leading: Icon(particle.isShared ? Icons.check_box : Icons.check_box_outline_blank, color: particle.isOwned ? GreenHouseColors.green : GreenHouseColors.black),
+                        title: Text('Share Particle data'),
+                        subtitle: particle.isOwned ? null : Text('You can only share data of your own Particles'),
+                        onTap: particle.isOwned ? () => context.bloc<ParticlesCubit>().shareParticle(particle, !particle.isShared) : null,
                       ),
                       Divider(),
                       ListTile(
@@ -157,21 +96,6 @@ class ParticlesPage extends StatelessWidget {
             title: Text('Unknown state'),
             leading: Icon(Icons.error, color: GreenHouseColors.orange),
           );
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        backgroundColor: Theme.of(context).accentColor,
-        onPressed: () async {
-          final result = await showDialog(context: context, builder: (_) => ParticlesDialog());
-          if (result == true) context.bloc<ParticlesCubit>().load();
-          if (result == false) {
-            _scaffoldKey.currentState
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                const SnackBar(content: Text('Failed to add particle. Particles could only be added by admins during devlopment.')),
-              );
-          }
         },
       ),
     );

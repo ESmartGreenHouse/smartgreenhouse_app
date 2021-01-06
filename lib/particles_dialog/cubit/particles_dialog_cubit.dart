@@ -59,20 +59,20 @@ class ParticlesDialogCubit extends Cubit<ParticlesDialogState> {
 
     emit(state.copyWith(status: FormzStatus.submissionInProgress));
 
-    final result = await greenhouseRepository.addOrUpdateParticle(Particle(
-      id: state.id ?? sha256.convert(utf8.encode(state.mac.value)).toString(),
-      name: state.name.value,
-      description: state.description.value,
-      ownerUid: authenticationBloc.state.user.id,
-      sensors: [],
-      readUids: [authenticationBloc.state.user.id],
-      writeUids: [authenticationBloc.state.user.id],
-    ));
+    // final result = await greenhouseRepository.addOrUpdateParticle(Particle(
+    //   id: state.id ?? sha256.convert(utf8.encode(state.mac.value)).toString(),
+    //   name: state.name.value,
+    //   description: state.description.value,
+    //   ownerUid: authenticationBloc.state.user.id,
+    //   sensors: [],
+    //   readUids: [authenticationBloc.state.user.id],
+    //   writeUids: [authenticationBloc.state.user.id],
+    // ));
 
-    if (result) {
-      emit(state.copyWith(status: FormzStatus.submissionSuccess));
-    } else {
-      emit(state.copyWith(status: FormzStatus.submissionFailure));
-    }
+    // if (result) {
+    //   emit(state.copyWith(status: FormzStatus.submissionSuccess));
+    // } else {
+    //   emit(state.copyWith(status: FormzStatus.submissionFailure));
+    // }
   }
 }

@@ -33,28 +33,15 @@ class ParticlesCubit extends Cubit<ParticlesState> {
     }
   }
 
-  void addReadUser(Particle particle, String uuid) async {
-    await greenhouseRepository.addOrUpdateParticle(particle.copyWith(readUids: particle.readUids..add(uuid)));
+  void syncParticleCloud() async {
+    emit(ParticlesLoadInProgress());
+    await greenhouseRepository.syncParticles();
     load();
   }
 
-  void removeReadUser(Particle particle, String uuid) async {
-    await greenhouseRepository.addOrUpdateParticle(particle.copyWith(readUids: particle.readUids..removeWhere((u) => u == uuid)));
-    load();
-  }
-
-  void addWriteUser(Particle particle, String uuid) async {
-    await greenhouseRepository.addOrUpdateParticle(particle.copyWith(writeUids: particle.writeUids..add(uuid)));
-    load();
-  }
-
-  void removeWriteUser(Particle particle, String uuid) async {
-    await greenhouseRepository.addOrUpdateParticle(particle.copyWith(writeUids: particle.writeUids..removeWhere((u) => u == uuid)));
-    load();
-  }
-
-  void deleteParticle(Particle particle) async {
-    await greenhouseRepository.deleteParticle(particle);
+  void shareParticle(Particle particle, bool share) async {
+    emit(ParticlesLoadInProgress());
+    await greenhouseRepository.shareParticleData(particle, share);
     load();
   }
 }

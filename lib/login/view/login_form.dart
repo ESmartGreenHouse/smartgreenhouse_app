@@ -40,8 +40,6 @@ class LoginForm extends StatelessWidget {
                     const SizedBox(height: 32.0),
                     _LoginButton(),
                     const SizedBox(height: 16.0),
-                    // _GoogleLoginButton(),
-                    // const SizedBox(height: 16.0),
                     _SignUpButton(),
                   ],
                 ),
@@ -135,25 +133,6 @@ class _LoginButton extends StatelessWidget {
                     : null,
               );
       },
-    );
-  }
-}
-
-class _GoogleLoginButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return RaisedButton.icon(
-      key: const Key('loginForm_googleLogin_raisedButton'),
-      label: const Text(
-        'SIGN IN WITH GOOGLE',
-        style: TextStyle(color: Colors.white),
-      ),
-      padding: EdgeInsets.all(16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
-      icon: const Icon(FontAwesomeIcons.google, color: Colors.white),
-      color: theme.accentColor,
-      onPressed: () => context.bloc<LoginCubit>().logInWithGoogle(),
     );
   }
 }

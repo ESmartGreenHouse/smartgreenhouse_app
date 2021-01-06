@@ -1,67 +1,98 @@
+import 'package:authentication_repository/authentication_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
 import 'package:greenhouse_repository/greenhouse_repository.dart';
 import 'package:meta/meta.dart';
 
 class GreenhouseRepository {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final AuthenticationRepository authenticationRepository;
+
+  GreenhouseRepository({@required this.authenticationRepository}) : assert(authenticationRepository != null);
+
+  Future<void> syncParticles() async {
+    try {
+      final response = await Dio().get<List<dynamic>>('https://api.particle.io/v1/devices',
+        options: Options(headers: { 'Authorization': 'Bearer ${await authenticationRepository.token}'})
+      );
+
+      if (response.statusCode == 200) {
+        for (final device in response.data) {
+          await firestore.collection('particles').doc(device['id'] as String).set({
+            'id': device['id'] as String,
+            'name': device['name'] as String,
+            'notes': device['notes'] as String,
+            'owner_uid': (await authenticationRepository.currentUser).id,
+          }, SetOptions(merge: true));
+        }
+      }
+
+    } on DioError catch(e) {
+      print(e);
+    } catch(e) {
+      print(e);
+    }
+  }
 
   Future<List<Particle>> getParticles(String uid) async {
-
     try {
-      final result = await firestore.collection('particles')
-        .where('read_uid', arrayContains: uid)
-        .get();
+      final ownedParticles = (await firestore.collection('particles')
+        .where('owner_uid', isEqualTo: (await authenticationRepository.currentUser).id)
+        .get())
+        .docs
+        .map((d) => Particle(
+          id: d['id'] as String,
+          name: d['name'] as String,
+          notes: d['notes'] as String ?? '',
+          isShared: d['shared'] as bool,
+          isOwned: true,
+        ))
+        .toList();
 
-      return result.docs.map<Particle>((d) => Particle(
-        id: d.data()['particle_id'] as String,
-        name: d.data()['particle_name'] as String,
-        description: d.data()['particle_description'] as String ?? '',
-        ownerUid: d.data()['owner_uid'] as String,
-        sensors: (d.data()['sensors'])?.map<Sensor>((e) => Sensor(name: e.toString()))?.toList() ?? <Sensor>[],
-        readUids: (d.data()['read_uid'])?.map<String>((e) => e.toString())?.toList() ?? <String>[],
-        writeUids: (d.data()['write_uid'])?.map<String>((e) => e.toString())?.toList() ?? <String>[],
-      )).toList();
+      final sharedParticles = (await firestore.collection('particles')
+        .where('owner_uid', isNotEqualTo: (await authenticationRepository.currentUser).id)
+        .where('shared', isEqualTo: true)
+        .get())
+        .docs
+        .map((d) => Particle(
+          id: d['id'] as String,
+          name: d['name'] as String,
+          notes: d['notes'] as String ?? '',
+          isShared: d['shared'] as bool,
+          isOwned: false,
+        ))
+        .toList();
+
+        return [...ownedParticles, ...sharedParticles];
+
+    } on DioError catch(e) {
+      print(e);
     } catch(e) {
       print(e);
-      return null;
     }
   }
 
-  Future<bool> addOrUpdateParticle(Particle particle) async {
+  Future<void> shareParticleData(Particle particle, [bool share = false]) async {
     try {
       await firestore.collection('particles').doc(particle.id).set({
-        'particle_id': particle.id,
-        'particle_name': particle.name,
-        'particle_description': particle.description ?? '',
-        'owner_uid': particle.ownerUid,
-        'read_uid': particle.readUids,
-        'write_uid': particle.writeUids,
-      });
-      return true;
+        'shared': share,
+      }, SetOptions(merge: true));
     } catch(e) {
       print(e);
-      return false;
-    }
-  }
-
-  Future<bool> deleteParticle(Particle particle) async {
-    try {
-      await firestore.collection('particles').doc(particle.id).delete();
-      return true;
-    } catch(e) {
-      print(e);
-      return false;
     }
   }
 
   /// Returns the measured values of a sensor of a particle in the last day.
   Future<List<Measurement>> getRecentMeasurement({@required Particle particle, @required Sensor sensor, @required DateTime date}) async {
     try {
+      final minTimestamp = Timestamp.fromDate(date.subtract(Duration(days: 1)));
+      final maxTimestamp = Timestamp.fromDate(date.add(Duration(days: 1)));
+
       final snapshot = await firestore.collection('data')
         .where('particle_id', isEqualTo: particle.id)
         .where('sensor', isEqualTo: sensor.name)
-        .where('min_timestamp', isGreaterThan: Timestamp.fromDate(date.subtract(Duration(days: 1))))
-        .where('min_timestamp', isLessThan: Timestamp.fromDate(date))
+        .where('min_timestamp', isGreaterThan: minTimestamp)
+        .where('min_timestamp', isLessThan: maxTimestamp)
         .get();
 
       final List<Measurement> result = [];
