@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer' as dev;
 
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -32,7 +33,7 @@ class AuthenticationRepository {
       final result = await _store.collection('users').doc(_auth.currentUser.uid).get();
       return result.data()['cloud_token'];
     } catch(e) {
-      print(e);
+      dev.log('Failed to get token for user ${_auth.currentUser.uid}', error: e);
       return null;
     }
   }
@@ -49,8 +50,8 @@ class AuthenticationRepository {
 
   final StreamController<User> _userController = StreamController.broadcast();
   Stream<User> get user async* {
+    yield await currentUser;
     yield* _userController.stream;
-    emitUser();
   }
 
   Future<void> emitUser() async {
