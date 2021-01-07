@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:smartgreenhouse_app/alerts/alerts.dart';
 import 'package:smartgreenhouse_app/home/home.dart';
 import 'package:smartgreenhouse_app/particles/particles.dart';
 import 'package:smartgreenhouse_app/reports/reports.dart';
@@ -33,11 +32,6 @@ class AppDrawer extends StatelessWidget {
           leading: FaIcon(FontAwesomeIcons.cogs, color: GreenHouseColors.black),
           title: Text('Tasks'),
           onTap: () => Navigator.of(context).pushAndRemoveUntil<void>(TasksPage.route(), (route) => false),
-        ),
-        ListTile(
-          leading: FaIcon(FontAwesomeIcons.bell, color: GreenHouseColors.black),
-          title: Text('Alerts'),
-          onTap: () => Navigator.of(context).pushAndRemoveUntil<void>(AlertsPage.route(), (route) => false),
         ),
       ],
     );
