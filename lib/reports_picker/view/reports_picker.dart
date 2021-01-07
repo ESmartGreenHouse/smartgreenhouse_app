@@ -13,7 +13,7 @@ class ReportsPicker extends StatelessWidget {
       create: (context) => ReportsPickerCubit(),
       child: BlocListener<ReportsPickerCubit, ReportsPickerState>(
         listener: (context, state) {
-          if (state.isValid) context.bloc<ReportsCubit>().load(state.particle, state.sensor, state.dateTime);
+          if (state.isValid) context.bloc<ReportsCubit>().load(state.particle, state.sensor, state.dateTime, state.calculateAverage);
         },
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -34,6 +34,16 @@ class ReportsPicker extends StatelessWidget {
             Divider(),
             ReportsPickerDate(),
             ReportsPickerTime(),
+            Divider(),
+            BlocBuilder<ReportsPickerCubit, ReportsPickerState>(
+              builder: (context, state) {
+                return ListTile(
+                  leading: Icon(state.calculateAverage ? Icons.check_box : Icons.check_box_outline_blank, color: GreenHouseColors.green),
+                  title: Text('Calculate minute average'),
+                  onTap: () => context.bloc<ReportsPickerCubit>().toggleAverage(),
+                );
+              },
+            ),
             Divider(),
             BlocBuilder<ReportsPickerCubit, ReportsPickerState>(
               builder: (context, state) {

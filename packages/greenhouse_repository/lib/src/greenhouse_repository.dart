@@ -125,7 +125,12 @@ class GreenhouseRepository {
   }
 
   /// Returns the measured values of a sensor of a particle in the last hour.
-  Future<List<Measurement>> getRecentMeasurement({@required Particle particle, @required Sensor sensor, @required DateTime date}) async {
+  Future<List<Measurement>> getRecentMeasurement({
+    @required Particle particle,
+    @required Sensor sensor,
+    @required DateTime date,
+    bool calculateAverage = false,
+  }) async {
     try {
       final minTimestamp = Timestamp.fromDate(date.subtract(Duration(hours: 1)));
       final maxTimestamp = Timestamp.fromDate(date);
@@ -140,11 +145,19 @@ class GreenhouseRepository {
       final List<Measurement> result = [];
       for (final doc in snapshot.docs) {
         final values = doc.get('values') as List<dynamic>;
-        for (final value in values) {
+
+        if (calculateAverage) {
           result.add(Measurement(
-            timestamp: (doc.get('min_timestamp') as Timestamp).toDate().add(Duration(seconds: (60 / values.length).round())),
-            value: value as double,
+            timestamp: (doc.get('min_timestamp') as Timestamp).toDate(),
+            value: values.map((v) => v as double).toList().reduce((value, element) => value += element) / values.length,
           ));
+        } else {
+          for (var i = 0; i < values.length; i++) {
+            result.add(Measurement(
+              timestamp: (doc.get('min_timestamp') as Timestamp).toDate().add(Duration(seconds: (60 / values.length * i).round())),
+              value: values.elementAt(i),
+            ));
+          }
         }
       }
 

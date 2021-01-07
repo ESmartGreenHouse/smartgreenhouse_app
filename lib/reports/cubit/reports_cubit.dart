@@ -13,10 +13,16 @@ class ReportsCubit extends Cubit<ReportsState> {
     : assert(greenhouseRepository != null),
       super(ReportsInitial());
 
-  void load(Particle particle, Sensor sensor, DateTime date) async {
+  void load(Particle particle, Sensor sensor, DateTime date, bool calculateAverage) async {
     emit(ReportsLoadInProgress());
 
-    final result = await greenhouseRepository.getRecentMeasurement(particle: particle, sensor: sensor, date: date);
+    final result = await greenhouseRepository.getRecentMeasurement(
+      particle: particle,
+      sensor: sensor,
+      date: date,
+      calculateAverage: calculateAverage
+    );
+
     if (result != null) {
       if (result.isNotEmpty) {
         emit(ReportsLoadSuccess(result));

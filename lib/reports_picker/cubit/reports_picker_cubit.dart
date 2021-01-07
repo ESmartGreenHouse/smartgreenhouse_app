@@ -35,4 +35,8 @@ class ReportsPickerCubit extends Cubit<ReportsPickerState> {
       )));
     }
   }
+
+  void toggleAverage() {
+    emit(state.copyWith(calculateAverage: !state.calculateAverage));
+  }
 }
