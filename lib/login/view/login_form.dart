@@ -2,7 +2,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:smartgreenhouse_app/login/login.dart';
 import 'package:smartgreenhouse_app/sign_up/sign_up.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:formz/formz.dart';
 import 'package:smartgreenhouse_app/theme.dart';
 
@@ -63,7 +62,6 @@ class _EmailInput extends StatelessWidget {
       buildWhen: (previous, current) => previous.email != current.email,
       builder: (context, state) {
         return TextField(
-          key: const Key('loginForm_emailInput_textField'),
           autocorrect: true,
           onChanged: (email) => context.bloc<LoginCubit>().emailChanged(email),
           keyboardType: TextInputType.emailAddress,
@@ -92,9 +90,7 @@ class _PasswordInput extends StatelessWidget {
       buildWhen: (previous, current) => previous.password != current.password,
       builder: (context, state) {
         return TextField(
-          key: const Key('loginForm_passwordInput_textField'),
-          onChanged: (password) =>
-              context.bloc<LoginCubit>().passwordChanged(password),
+          onChanged: (password) => context.bloc<LoginCubit>().passwordChanged(password),
           obscureText: true,
           decoration: InputDecoration(
             labelText: 'Password',
@@ -120,7 +116,6 @@ class _LoginButton extends StatelessWidget {
         return state.status.isSubmissionInProgress
             ? const CircularProgressIndicator()
             : RaisedButton(
-                key: const Key('loginForm_continue_raisedButton'),
                 child: const Text('LOGIN', style: TextStyle(color: Colors.white)),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30.0),
@@ -142,12 +137,13 @@ class _SignUpButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return FlatButton(
-      key: const Key('loginForm_createAccount_flatButton'),
       child: Text(
         'CREATE ACCOUNT',
         style: TextStyle(color: theme.primaryColor),
       ),
-      onPressed: () => Navigator.of(context).push<void>(SignUpPage.route()),
+      onPressed: () => Scaffold.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(content: Text('Account creation is currently deactivated, please contact the ISD SmartGreenHouse team.'),)),
     );
   }
 }

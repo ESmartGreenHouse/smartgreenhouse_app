@@ -12,7 +12,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: GreenHouseColors.green,      
+      backgroundColor: GreenHouseColors.green,
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
@@ -26,7 +26,7 @@ class LoginPage extends StatelessWidget {
           ),
           child: LoginForm(),
         ),
-      ),            
+      ),
     );
   }
 }
