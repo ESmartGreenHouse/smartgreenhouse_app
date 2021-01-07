@@ -35,10 +35,15 @@ class GreenhouseRepository {
         if (response.statusCode == 200) {
           for (final device in response.data) {
             await firestore.collection('particles').doc(device['id'] as String).set({
+              'owner_uid': (await authenticationRepository.currentUser).id,
               'id': device['id'] as String,
               'name': device['name'] as String,
               'notes': device['notes'] as String,
-              'owner_uid': (await authenticationRepository.currentUser).id,
+              'sensors': (device['variables'] as Map<String, dynamic>)
+                .keys
+                .where((v) => v.contains('sensor'))
+                .map((v) => v.split('_')[1])
+                .toList(),
             }, SetOptions(merge: true));
           }
         }
@@ -63,6 +68,7 @@ class GreenhouseRepository {
           notes: d.get('notes') as String ?? '',
           isShared: d.data().containsKey('shared') ? d.get('shared') as bool ?? false : false,
           isOwned: true,
+          sensors: (d.get('sensors') as List<dynamic>)?.map((s) => Sensor(name: s.toString()))?.toList() ?? [],
         ))
         .toList();
 
@@ -77,6 +83,7 @@ class GreenhouseRepository {
           notes: d.get('notes') as String ?? '',
           isShared: d.data().containsKey('shared') ? d.get('shared') as bool ?? false : false,
           isOwned: false,
+          sensors: (d.get('sensors') as List<dynamic>)?.map((s) => Sensor(name: s.toString()))?.toList() ?? [],
         ))
         .toList();
 
@@ -117,11 +124,11 @@ class GreenhouseRepository {
     }
   }
 
-  /// Returns the measured values of a sensor of a particle in the last day.
+  /// Returns the measured values of a sensor of a particle in the last hour.
   Future<List<Measurement>> getRecentMeasurement({@required Particle particle, @required Sensor sensor, @required DateTime date}) async {
     try {
-      final minTimestamp = Timestamp.fromDate(date.subtract(Duration(days: 1)));
-      final maxTimestamp = Timestamp.fromDate(date.add(Duration(days: 1)));
+      final minTimestamp = Timestamp.fromDate(date.subtract(Duration(hours: 1)));
+      final maxTimestamp = Timestamp.fromDate(date);
 
       final snapshot = await firestore.collection('data')
         .where('particle_id', isEqualTo: particle.id)
@@ -132,10 +139,11 @@ class GreenhouseRepository {
 
       final List<Measurement> result = [];
       for (final doc in snapshot.docs) {
-        for (final value  in doc.data()['values']) {
+        final values = doc.get('values') as List<dynamic>;
+        for (final value in values) {
           result.add(Measurement(
-            timestamp: (value['timestamp'] as Timestamp).toDate(),
-            value: value['value'] as double,
+            timestamp: (doc.get('min_timestamp') as Timestamp).toDate().add(Duration(seconds: (60 / values.length).round())),
+            value: value as double,
           ));
         }
       }

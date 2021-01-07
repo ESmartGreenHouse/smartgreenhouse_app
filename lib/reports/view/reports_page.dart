@@ -5,6 +5,8 @@ import 'package:responsive_scaffold/templates/layout/scaffold.dart';
 import 'package:smartgreenhouse_app/logout/logout.dart';
 import 'package:smartgreenhouse_app/menu/menu.dart';
 import 'package:smartgreenhouse_app/reports/reports.dart';
+import 'package:smartgreenhouse_app/reports_picker/reports_picker.dart';
+import 'package:smartgreenhouse_app/theme.dart';
 
 class ReportsPage extends StatelessWidget {
   const ReportsPage({Key key}) : super(key: key);
@@ -18,32 +20,50 @@ class ReportsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (context) => ReportsCubit(
-            greenhouseRepository: context.repository<GreenhouseRepository>(),
-          ),
-        )
-      ],
+    return BlocProvider(
+      create: (context) => ReportsCubit(
+        greenhouseRepository: context.repository<GreenhouseRepository>(),
+      ),
       child: ResponsiveScaffold(
         title: Text('Reports'),
         drawer: AppDrawer(),
         trailing: LogoutButton(),
         endIcon:  Icons.biotech,
-        endDrawer: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              title: Text('Sensors', style: TextStyle(fontWeight: FontWeight.bold)),
-              subtitle: Text('Select a sensor to display its measurement'),
-            ),
-            ReportsDateTile(),
-            ReportsSensorList(),
-          ],
+        endDrawer: ReportsPicker(),
+        body: BlocBuilder<ReportsCubit, ReportsState>(
+          builder: (context, state) {
+            if (state is ReportsLoadSuccess) return PointsLineChart(state.measurement);
+            if (state is ReportsLoadInProgress) return Column(children: [LinearProgressIndicator()]);
+            if (state is ReportsLoadFailure) {
+              return Column(
+                children: [
+                  ListTile(
+                    title: Text(state.message),
+                    leading: Icon(Icons.error, color: GreenHouseColors.orange),
+                  ),
+                ],
+              );
+            }
+            if (state is ReportsInitial) {
+              return Column(
+                children: [
+                  ListTile(
+                    title: Text('Select a Measurement to load'),
+                    leading: Icon(Icons.error, color: GreenHouseColors.orange),
+                  ),
+                ],
+              );
+            }
+            return Column(
+              children: [
+                ListTile(
+                  title: Text('Unknown state'),
+                  leading: Icon(Icons.error, color: GreenHouseColors.orange),
+                ),
+              ],
+            );
+          },
         ),
-        body: PointsLineChart(),
       ),
     );
   }
