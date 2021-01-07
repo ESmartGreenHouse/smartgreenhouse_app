@@ -1,118 +1,156 @@
 import 'dart:async';
+import 'dart:developer' as dev;
 
-import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:authentication_repository/authentication_repository.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:meta/meta.dart';
 
 import 'models/models.dart';
 
-/// Thrown if during the sign up process if a failure occurs.
-class SignUpFailure implements Exception {}
+class LinkParticleCloudFailure implements Exception {}
 
-/// Thrown during the login process if a failure occurs.
-class LogInWithEmailAndPasswordFailure implements Exception {}
+class FirebaseSignUpFailure implements Exception {}
 
-/// Thrown during the sign in with google process if a failure occurs.
-class LogInWithGoogleFailure implements Exception {}
+class FirebaseLoginFailure implements Exception {}
 
-/// Thrown during the logout process if a failure occurs.
 class LogOutFailure implements Exception {}
 
-/// {@template authentication_repository}
-/// Repository which manages user authentication.
-/// {@endtemplate}
+
 class AuthenticationRepository {
-  /// {@macro authentication_repository}
-  AuthenticationRepository({
-    firebase_auth.FirebaseAuth firebaseAuth,
-    GoogleSignIn googleSignIn,
-  })  : _firebaseAuth = firebaseAuth ?? firebase_auth.FirebaseAuth.instance,
-        _googleSignIn = googleSignIn ?? GoogleSignIn.standard();
+  final _store = FirebaseFirestore.instance;
+  final _auth = auth.FirebaseAuth.instance;
 
-  final firebase_auth.FirebaseAuth _firebaseAuth;
-  final GoogleSignIn _googleSignIn;
-
-  /// Stream of [User] which will emit the current user when
-  /// the authentication state changes.
-  ///
-  /// Emits [User.empty] if the user is not authenticated.
-  Stream<User> get user {
-    return _firebaseAuth.authStateChanges().map((firebaseUser) {
-      return firebaseUser == null ? User.empty : firebaseUser.toUser;
+  AuthenticationRepository() {
+    _auth.authStateChanges().listen((_) async {
+      _userController.add(await currentUser);
     });
   }
 
-  /// Creates a new user with the provided [email] and [password].
-  ///
-  /// Throws a [SignUpFailure] if an exception occurs.
+  Future<String> get token async {
+    try {
+      final result = await _store.collection('users').doc(_auth.currentUser.uid).get();
+      return result.data()['cloud_token'];
+    } catch(e) {
+      dev.log('Failed to get token for user ${_auth.currentUser.uid}', error: e);
+      return null;
+    }
+  }
+
+  Future<User> get currentUser async {
+    final firebaseUser = _auth.currentUser;
+    return firebaseUser == null ? User.empty : User(
+      id: firebaseUser.uid,
+      email: firebaseUser.email,
+      name: firebaseUser.displayName,
+      isCloudLinked: await token != null,
+    );
+  }
+
+  final StreamController<User> _userController = StreamController.broadcast();
+  Stream<User> get user async* {
+    yield await currentUser;
+    yield* _userController.stream;
+  }
+
+  Future<void> emitUser() async {
+    _userController.add(await currentUser);
+  }
+
+  Future<void> unlink() async {
+    try {
+      await _store.collection('users').doc(_auth.currentUser.uid).delete();
+      await emitUser();
+    } catch(e) {
+      print(e);
+      throw LinkParticleCloudFailure();
+    }
+  }
+
+  Future<void> link({
+    @required String email,
+    @required String password,
+    @required String id,
+    @required String secret,
+  }) async {
+    try {
+      final authResponse = await Dio().post('https://api.particle.io/oauth/token',
+        data: <String, dynamic>{
+          'client_id': id,
+          'client_secret': secret,
+          'grant_type': 'password',
+          'username': email,
+          'password': password,
+          'expires_in': 0
+        },
+        options: Options(contentType: 'application/x-www-form-urlencoded')
+      );
+
+      final accessToken = authResponse.data['access_token'] as String;
+
+      if (authResponse.statusCode == 200) {
+        final userResponse = await Dio().get('https://api.particle.io/v1/user',
+          options: Options(headers: { 'Authorization': 'Bearer $accessToken'})
+        );
+
+        if (userResponse.statusCode == 200) {
+          await _store.collection('users').doc(_auth.currentUser.uid).set({
+            'cloud_token': accessToken,
+            'cloud_username': userResponse.data['username'] as String,
+          });
+          await emitUser();
+        } else {
+          throw LinkParticleCloudFailure();
+        }
+      } else {
+        throw LinkParticleCloudFailure();
+      }
+    } on DioError catch(e) {
+      print(e);
+      throw LinkParticleCloudFailure();
+    } catch(e) {
+      print(e);
+      throw LinkParticleCloudFailure();
+    }
+  }
+
   Future<void> signUp({
     @required String email,
     @required String password,
   }) async {
-    assert(email != null && password != null);
     try {
-      await _firebaseAuth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-    } on Exception {
-      throw SignUpFailure();
+      final credential = _auth.createUserWithEmailAndPassword(email: email, password: password);
+      print(credential);
+    } on auth.FirebaseException catch (e) {
+      print(e);
+      throw FirebaseSignUpFailure();
+    } catch(e) {
+      print(e);
+      throw FirebaseSignUpFailure();
     }
   }
 
-  /// Starts the Sign In with Google Flow.
-  ///
-  /// Throws a [LogInWithEmailAndPasswordFailure] if an exception occurs.
-  Future<void> logInWithGoogle() async {
-    try {
-      final googleUser = await _googleSignIn.signIn();
-      final googleAuth = await googleUser.authentication;
-      final credential = firebase_auth.GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-      await _firebaseAuth.signInWithCredential(credential);
-    } on Exception {
-      throw LogInWithGoogleFailure();
-    }
-  }
-
-  /// Signs in with the provided [email] and [password].
-  ///
-  /// Throws a [LogInWithEmailAndPasswordFailure] if an exception occurs.
-  Future<void> logInWithEmailAndPassword({
+  Future<void> login({
     @required String email,
     @required String password,
   }) async {
-    assert(email != null && password != null);
     try {
-      await _firebaseAuth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-    } on Exception {
-      throw LogInWithEmailAndPasswordFailure();
+      await _auth.signInWithEmailAndPassword(email: email, password: password);
+    } on auth.FirebaseException catch(e) {
+      print(e);
+      throw FirebaseLoginFailure();
+    } catch(e) {
+      print(e);
+      throw FirebaseLoginFailure();
     }
   }
 
-  /// Signs out the current user which will emit
-  /// [User.empty] from the [user] Stream.
-  ///
-  /// Throws a [LogOutFailure] if an exception occurs.
   Future<void> logOut() async {
     try {
-      await Future.wait([
-        _firebaseAuth.signOut(),
-        _googleSignIn.signOut(),
-      ]);
+      await _auth.signOut();
     } on Exception {
       throw LogOutFailure();
     }
-  }
-}
-
-extension on firebase_auth.User {
-  User get toUser {
-    return User(id: uid, email: email, name: displayName);
   }
 }

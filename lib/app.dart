@@ -38,7 +38,6 @@ class App extends StatelessWidget {
           BlocProvider(
             create: (context) => ParticlesCubit(
               greenhouseRepository: greenhouseRepository,
-              authenticationBloc: context.bloc<AuthenticationBloc>(),
             ),
           ),
         ],
@@ -69,7 +68,7 @@ class _AppViewState extends State<AppView> {
           listener: (context, state) {
             switch (state.status) {
               case AuthenticationStatus.authenticated:
-                context.bloc<ParticlesCubit>().load();
+                context.bloc<ParticlesCubit>().syncParticleCloud();
                 _navigator.pushAndRemoveUntil<void>(
                   HomePage.route(),
                   (route) => false,

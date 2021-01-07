@@ -1,26 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:smartgreenhouse_app/reports/reports.dart';
+import 'package:smartgreenhouse_app/reports_picker/reports_picker.dart';
 import 'package:smartgreenhouse_app/theme.dart';
 
-class ReportsDateTile extends StatelessWidget {
-  const ReportsDateTile({Key key}) : super(key: key);
+class ReportsPickerDate extends StatelessWidget {
+  const ReportsPickerDate({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: BlocBuilder<ReportsCubit, ReportsState>(
+      title: BlocBuilder<ReportsPickerCubit, ReportsPickerState>(
         builder: (context, state) {
-          if (state is ReportsLoadPending) {
-            if (state.date != null) {
-              return Text(state.date.toIso8601String());
-            }
+          if (state.dateTime != null) {
+            return Text('${state.dateTime.year}-${state.dateTime.month}-${state.dateTime.day}');
+          } else {
             return Text('Please select a date');
           }
-          if (state is ReportsLoadSuccess) {
-            return Text(state.date.toIso8601String()); 
-          }
-          return Text('Please select a date');
         },
       ),
       leading: Icon(Icons.calendar_today, color: GreenHouseColors.green),
@@ -31,9 +26,7 @@ class ReportsDateTile extends StatelessWidget {
           lastDate: DateTime.now(),
           initialDate: DateTime.now(),
         );
-        if (date != null) {
-          context.bloc<ReportsCubit>().date(date);
-        }
+        if (date != null) context.bloc<ReportsPickerCubit>().date(date);
       },
     );
   }

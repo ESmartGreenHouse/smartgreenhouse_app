@@ -1,5 +1,6 @@
 name: greenhouse_repository
 description: Dart package which manages the greenhouse domain.
+publish_to: none
 version: 1.0.0
 
 environment:
@@ -8,12 +9,17 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  
+
   meta: ^1.1.8
   equatable: ^1.2.3
-  
+
   firebase_core: ^0.5.2+1
   cloud_firestore: ^0.14.3+1
+
+  dio: ^3.0.10
+
+  authentication_repository:
+    path: ../authentication_repository
 
 dev_dependencies:
   flutter_test:

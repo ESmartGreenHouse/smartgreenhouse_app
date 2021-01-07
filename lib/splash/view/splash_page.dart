@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smartgreenhouse_app/theme.dart';
 
 class SplashPage extends StatelessWidget {
   static Route route() {
@@ -9,9 +10,14 @@ class SplashPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: CircleAvatar(
-          child: Text('ISD'),
-        )
+        child: SizedBox(
+          width: 200.0,
+          height: 200.0,
+          child: CircularProgressIndicator(
+            strokeWidth: 10.0,
+            valueColor: AlwaysStoppedAnimation(GreenHouseColors.green),
+          ),
+        ),
       ),
     );
   }
