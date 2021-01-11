@@ -124,6 +124,28 @@ class GreenhouseRepository {
     }
   }
 
+  Future<List<Sensor>> getSensorValuesOfParticle(Particle particle) async {
+    final List<Sensor> result = [];
+
+    for (final sensor in particle.sensors) {
+      try {
+        final response = await Dio().get('https://api.particle.io/v1/devices/${particle.id}/sensor_${sensor.name}',
+          options: Options(headers: { 'Authorization': 'Bearer ${await authenticationRepository.token}'}),
+        );
+        if (response.statusCode == 200) {
+          result.add(sensor.copyWith(value: response.data['result'] as double));
+        } else {
+          result.add(sensor);
+        }
+      } catch(e) {
+        print(e);
+        result.add(sensor);
+      }
+    }
+
+    return result;
+  }
+
   /// Returns the measured values of a sensor of a particle in the last hour.
   Future<List<Measurement>> getRecentMeasurement({
     @required Particle particle,
