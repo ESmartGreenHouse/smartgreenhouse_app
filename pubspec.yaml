@@ -45,6 +45,8 @@ dependencies:
   hive: ^1.4.4+1
   hive_flutter: ^0.3.1
 
+  flutter_wall_layout: ^1.0.0
+
   authentication_repository:
     path: packages/authentication_repository
 

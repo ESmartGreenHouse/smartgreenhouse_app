@@ -12,12 +12,12 @@ class SensorValuesInitial extends SensorValuesState {}
 class SensorValuesLoadInProgress extends SensorValuesState {}
 
 class SensorValuesLoadSuccess extends SensorValuesState {
-  final List<Sensor> sensors;
+  final SensorOverview overview;
 
-  SensorValuesLoadSuccess(this.sensors);
+  SensorValuesLoadSuccess(this.overview);
 
   @override
-  List<Object> get props => [sensors];
+  List<Object> get props => [overview];
 }
 
 class SensorValuesLoadFailure extends SensorValuesState {
