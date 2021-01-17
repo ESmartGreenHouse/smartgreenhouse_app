@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:greenhouse_repository/greenhouse_repository.dart';
 import 'package:smartgreenhouse_app/authentication/authentication.dart';
-import 'package:smartgreenhouse_app/common/text_dialog.dart';
 import 'package:smartgreenhouse_app/menu/menu.dart';
 import 'package:smartgreenhouse_app/particle_cloud/particle_cloud.dart';
 import 'package:smartgreenhouse_app/particles/particles.dart';
@@ -42,73 +42,10 @@ class ParticlesPage extends StatelessWidget {
           if (state is ParticlesLoadSuccess) {
             return Padding(
               padding: const EdgeInsets.all(16.0),
-              child: ListView.builder(
-                itemCount: state.particles.length,
-                itemBuilder: (context, index) {
-                  final particle = state.particles.elementAt(index);
-                  return Card(
-                    margin: EdgeInsets.all(16.0),
-                    child: Column(
-                      children: [
-                        ListTile(
-                          leading: particle.isOwned ? Icon(Icons.person, color: GreenHouseColors.green) : Icon(Icons.person_outline, color: GreenHouseColors.black),
-                          title: Text(particle.isOwned ? 'Owned' : 'Shared'),
-                        ),
-                        Divider(),
-                        ListTile(
-                          leading: Icon(Icons.memory, color: GreenHouseColors.green),
-                          title: Text(particle.name),
-                          subtitle: Text(particle.id),
-                          trailing: particle.isOwned ? IconButton(
-                            icon: Icon(Icons.edit, color: GreenHouseColors.green),
-                            onPressed: () async {
-                              final result = await showDialog<String>(context: context, builder: (_) => TextDialog(
-                                title: 'Rename Particle',
-                                label: 'Name',
-                                hint: particle.name,
-                                initalValue: particle.name,
-                              ));
-                              if (result != null) {
-                                context.bloc<ParticlesCubit>().renameParticle(particle, result);
-                              }
-                            },
-                          ) : null,
-                        ),
-                        ListTile(
-                          leading: Icon(Icons.notes, color: GreenHouseColors.black),
-                          title: Text(particle.notes),
-                          subtitle: Text('Notes'),
-                          trailing: particle.isOwned ? IconButton(
-                            icon: Icon(Icons.edit, color: GreenHouseColors.green),
-                            onPressed: () async {
-                              final result = await showDialog<String>(context: context, builder: (_) => TextDialog(
-                                title: 'Particle Notes',
-                                label: 'Note',
-                                hint: particle.notes,
-                                initalValue: particle.notes,
-                              ));
-                              if (result != null) {
-                                context.bloc<ParticlesCubit>().changeParticleNotes(particle, result);
-                              }
-                            },
-                          ) : null,
-                        ),
-                        Divider(),
-                        ListTile(
-                          leading: Icon(particle.isShared ? Icons.check_box : Icons.check_box_outline_blank, color: particle.isOwned ? GreenHouseColors.green : GreenHouseColors.black),
-                          title: Text('Share Particle data'),
-                          subtitle: particle.isOwned ? null : Text('You can only share data of your own Particles'),
-                          onTap: particle.isOwned ? () => context.bloc<ParticlesCubit>().shareParticle(particle, !particle.isShared) : null,
-                        ),
-                        Divider(),
-                        ListTile(
-                          title: Text('Sensors', style: TextStyle(fontWeight: FontWeight.bold)),
-                          subtitle: Text(particle.sensors.isNotEmpty ? particle.sensors.map<String>((e) => e.name.toString()).toList().join(', ') : 'No sensors found'),
-                        ),
-                      ],
-                    ),
-                  );
-                },
+              child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: _particleCards(state.particles, MediaQuery.of(context).size.width > 1000 ? 2 : 1),
               ),
             );
           }
@@ -128,5 +65,30 @@ class ParticlesPage extends StatelessWidget {
         },
       ),
     );
+  }
+
+  List<Widget> _particleCards(List<Particle> particles, [int columnCount = 1]) {
+    final result = <Widget>[];
+
+    for (int i = 0; i < particles.length; i = i + columnCount) {
+      if (columnCount == 1) {
+        result.add(ParticleCard(particle: particles.elementAt(i)));
+      } else {
+        final row = <Widget>[];
+
+        for (int j = 0; j < columnCount; j++) {
+          if ((i + j) < particles.length) {
+            row.add(Flexible(child: ParticleCard(particle: particles.elementAt(i + j))));
+          }
+        }
+
+        result.add(Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: row,
+        ));
+      }
+    }
+
+    return result;
   }
 }

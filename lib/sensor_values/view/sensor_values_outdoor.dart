@@ -7,13 +7,22 @@ import 'package:smartgreenhouse_app/sensor_values/view/gauge_card.dart';
 import 'package:smartgreenhouse_app/theme.dart';
 
 class SensorValuesOutdoor extends StatelessWidget {
+
+  int _layersCount(Size size) {
+    if (size.width > 1200) return 8;
+    if (size.width > 800) return 6;
+    if (size.width > 600) return 4;
+    if (size.width > 400) return 3;
+    return 2;
+  }
+
   @override
   Widget build(BuildContext context) {
     return  BlocBuilder<SensorValuesCubit, SensorValuesState>(
       builder: (context, state) {
         if (state is SensorValuesLoadSuccess) {
           return WallLayout(
-            layersCount: 3,
+            layersCount: _layersCount(MediaQuery.of(context).size),
             stones: [
               Stone(
                 id: 1,
