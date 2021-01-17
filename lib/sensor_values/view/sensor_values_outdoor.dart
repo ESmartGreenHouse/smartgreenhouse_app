@@ -4,6 +4,7 @@ import 'package:flutter_wall_layout/flutter_wall_layout.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:smartgreenhouse_app/sensor_values/sensor_values.dart';
 import 'package:smartgreenhouse_app/sensor_values/view/gauge_card.dart';
+import 'package:smartgreenhouse_app/theme.dart';
 
 class SensorValuesOutdoor extends StatelessWidget {
   @override
@@ -18,7 +19,7 @@ class SensorValuesOutdoor extends StatelessWidget {
                 id: 1,
                 width: 2,
                 height: 2,
-                child:  GaugeCard(name: 'Temperature', unit: '°C', value: state.overview.outdoorTemperature, max: 50, colorHex: '#FF792D'),
+                child: GaugeCard(name: 'Temperature', unit: '°C', value: state.overview.outdoorTemperature, max: 50, colorHex: '#FF792D'),
               ),
               Stone(
                 id: 2,
@@ -83,10 +84,13 @@ class SensorValuesOutdoor extends StatelessWidget {
             ],
           );
         }
-        if (state is SensorValuesLoadInProgress) {
-          return LinearProgressIndicator();
+        if (state is SensorValuesLoadFailure) {
+          return ListTile(
+            title: Text('Failed to load sensor values!'),
+            leading: Icon(Icons.error, color: GreenHouseColors.orange),
+          );
         }
-        return Container();
+        return LinearProgressIndicator();
       },
     );
   }

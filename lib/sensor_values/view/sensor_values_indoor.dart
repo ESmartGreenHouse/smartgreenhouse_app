@@ -31,54 +31,6 @@ class SensorValuesIndoor extends StatelessWidget {
                 width: 1,
                 height: 1,
                 child: Card(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Icon(state.overview.isWindowOpen ? Icons.sensor_window_outlined : Icons.sensor_window, size: 50.0, color: GreenHouseColors.black),
-                      SizedBox(height: 5.0),
-                      Text('${state.overview.isWindowOpen ? 'OPEN' : 'CLOSED'}', style: TextStyle(color: Colors.grey), textAlign: TextAlign.center),
-                    ],
-                  ),
-                ),
-              ),
-              Stone(
-                id: 4,
-                width: 1,
-                height: 1,
-                child: Card(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Icon(true ? Icons.wb_incandescent : Icons.wb_incandescent_outlined, size: 50.0, color: true ? GreenHouseColors.orange : GreenHouseColors.black),
-                      SizedBox(height: 5.0),
-                      Text('${true ? 'ON' : 'OFF'}', style: TextStyle(color: Colors.grey), textAlign: TextAlign.center),
-                    ],
-                  ),
-                ),
-              ),
-              Stone(
-                id: 5,
-                width: 1,
-                height: 1,
-                child: Card(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Icon(false ? Icons.invert_colors : Icons.invert_colors_off, size: 50.0, color: GreenHouseColors.blue),
-                      SizedBox(height: 5.0),
-                      Text('${false ? 'ON' : 'OFF'}', style: TextStyle(color: Colors.grey), textAlign: TextAlign.center),
-                    ],
-                  ),
-                ),
-              ),
-              Stone(
-                id: 6,
-                width: 1,
-                height: 1,
-                child: Card(
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
@@ -98,13 +50,64 @@ class SensorValuesIndoor extends StatelessWidget {
                   ),
                 ),
               ),
+              Stone(
+                id: 4,
+                width: 1,
+                height: 1,
+                child: Card(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Icon(state.overview.isWindowOpen ? Icons.sensor_window_outlined : Icons.sensor_window, size: 50.0, color: GreenHouseColors.black),
+                      SizedBox(height: 5.0),
+                      Text('${state.overview.isWindowOpen ? 'OPEN' : 'CLOSED'}', style: TextStyle(color: Colors.grey), textAlign: TextAlign.center),
+                    ],
+                  ),
+                ),
+              ),
+              Stone(
+                id: 5,
+                width: 1,
+                height: 1,
+                child: Card(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Icon(true ? Icons.wb_incandescent : Icons.wb_incandescent_outlined, size: 50.0, color: true ? GreenHouseColors.orange : GreenHouseColors.black),
+                      SizedBox(height: 5.0),
+                      Text('${true ? 'ON' : 'OFF'}', style: TextStyle(color: Colors.grey), textAlign: TextAlign.center),
+                    ],
+                  ),
+                ),
+              ),
+              Stone(
+                id: 6,
+                width: 1,
+                height: 1,
+                child: Card(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Icon(false ? Icons.invert_colors : Icons.invert_colors_off, size: 50.0, color: GreenHouseColors.blue),
+                      SizedBox(height: 5.0),
+                      Text('${false ? 'ON' : 'OFF'}', style: TextStyle(color: Colors.grey), textAlign: TextAlign.center),
+                    ],
+                  ),
+                ),
+              ),
             ],
           );
         }
-        if (state is SensorValuesLoadInProgress) {
-          return LinearProgressIndicator();
+        if (state is SensorValuesLoadFailure) {
+          return ListTile(
+            title: Text('Failed to load sensor values!'),
+            leading: Icon(Icons.error, color: GreenHouseColors.orange),
+          );
         }
-        return Container();
+        return LinearProgressIndicator();
       },
     );
   }
