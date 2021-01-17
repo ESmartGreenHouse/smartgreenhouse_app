@@ -40,12 +40,14 @@ class ParticlesPage extends StatelessWidget {
       body: BlocBuilder<ParticlesCubit, ParticlesState>(
         builder: (context, state) {
           if (state is ParticlesLoadSuccess) {
-            return Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: _particleCards(state.particles, MediaQuery.of(context).size.width > 1000 ? 2 : 1),
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: _particleCards(state.particles, MediaQuery.of(context).size.width > 1000 ? 2 : 1),
+                ),
               ),
             );
           }
