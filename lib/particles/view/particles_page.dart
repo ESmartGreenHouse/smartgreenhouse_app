@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:responsive_scaffold/templates/layout/scaffold.dart';
 import 'package:smartgreenhouse_app/authentication/authentication.dart';
 import 'package:smartgreenhouse_app/common/text_dialog.dart';
-import 'package:smartgreenhouse_app/logout/logout.dart';
 import 'package:smartgreenhouse_app/menu/menu.dart';
 import 'package:smartgreenhouse_app/particle_cloud/particle_cloud.dart';
 import 'package:smartgreenhouse_app/particles/particles.dart';
 import 'package:smartgreenhouse_app/theme.dart';
 
 class ParticlesPage extends StatelessWidget {
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   static Route route() {
     return PageRouteBuilder<MaterialPageRoute<void>>(
@@ -21,12 +18,10 @@ class ParticlesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ResponsiveScaffold(
-      scaffoldKey: _scaffoldKey,
-      title: Text('Particles'),
-      drawer: AppDrawer(),
-      trailing: Row(
-        children: [
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Particles'),
+        actions: [
           IconButton(
             tooltip: 'Refresh Particles',
             icon: Icon(Icons.refresh),
@@ -39,9 +34,9 @@ class ParticlesPage extends StatelessWidget {
             onPressed: context.bloc<AuthenticationBloc>().state.user.isCloudLinked ? () => context.bloc<ParticlesCubit>().syncParticleCloud() : null,
           ),
           ParticleCloudButton(),
-          LogoutButton(),
         ],
       ),
+      drawer: AppDrawer(),
       body: BlocBuilder<ParticlesCubit, ParticlesState>(
         builder: (context, state) {
           if (state is ParticlesLoadSuccess) {

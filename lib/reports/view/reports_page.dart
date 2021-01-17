@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:greenhouse_repository/greenhouse_repository.dart';
-import 'package:responsive_scaffold/templates/layout/scaffold.dart';
-import 'package:smartgreenhouse_app/logout/logout.dart';
 import 'package:smartgreenhouse_app/menu/menu.dart';
 import 'package:smartgreenhouse_app/reports/reports.dart';
 import 'package:smartgreenhouse_app/reports_picker/reports_picker.dart';
 import 'package:smartgreenhouse_app/theme.dart';
 
 class ReportsPage extends StatelessWidget {
-  const ReportsPage({Key key}) : super(key: key);
 
   static Route route() {
     return PageRouteBuilder<MaterialPageRoute<void>>(
@@ -18,22 +15,38 @@ class ReportsPage extends StatelessWidget {
     );
   }
 
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => ReportsCubit(
         greenhouseRepository: context.repository<GreenhouseRepository>(),
       ),
-      child: ResponsiveScaffold(
-        title: Text('Reports'),
+      child: Scaffold(
+        key: _scaffoldKey,
+        appBar: AppBar(
+          title: Text('Reports'),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.biotech),
+              onPressed: () =>_scaffoldKey.currentState.openEndDrawer(),
+            ),
+          ],
+        ),
         drawer: AppDrawer(),
-        trailing: LogoutButton(),
-        endIcon:  Icons.biotech,
-        endDrawer: ReportsPicker(),
+        endDrawer: Drawer(child: ReportsPicker()),
         body: BlocBuilder<ReportsCubit, ReportsState>(
           builder: (context, state) {
-            if (state is ReportsLoadSuccess) return PointsLineChart(state.measurement);
-            if (state is ReportsLoadInProgress) return Column(children: [LinearProgressIndicator()]);
+            if (state is ReportsLoadSuccess) {
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: PointsLineChart(state.measurement),
+              );
+            }
+            if (state is ReportsLoadInProgress) {
+              return Column(children: [LinearProgressIndicator()]);
+            }
             if (state is ReportsLoadFailure) {
               return Column(
                 children: [
@@ -50,6 +63,8 @@ class ReportsPage extends StatelessWidget {
                   ListTile(
                     title: Text('Select a Measurement to load'),
                     leading: Icon(Icons.error, color: GreenHouseColors.orange),
+                    trailing: Icon(Icons.chevron_right),
+                    onTap: () => _scaffoldKey.currentState.openEndDrawer(),
                   ),
                 ],
               );

@@ -3,13 +3,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartgreenhouse_app/authentication/authentication.dart';
 
 class LogoutButton extends StatelessWidget {
-  const LogoutButton({Key key}) : super(key: key);
+  final Color color;
+
+  const LogoutButton({Key key, this.color = Colors.white}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return IconButton(
       tooltip: 'Logout',
-      icon: const Icon(Icons.exit_to_app),
+      icon: Icon(Icons.exit_to_app),
+      color: color,
       onPressed: () => context
         .bloc<AuthenticationBloc>()
         .add(AuthenticationLogoutRequested()),

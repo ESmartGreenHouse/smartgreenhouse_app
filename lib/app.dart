@@ -5,6 +5,7 @@ import 'package:greenhouse_repository/greenhouse_repository.dart';
 import 'package:smartgreenhouse_app/authentication/authentication.dart';
 import 'package:smartgreenhouse_app/home/home.dart';
 import 'package:smartgreenhouse_app/login/login.dart';
+import 'package:smartgreenhouse_app/menu/menu.dart';
 import 'package:smartgreenhouse_app/particles/particles.dart';
 import 'package:smartgreenhouse_app/sensor_values/sensor_values.dart';
 import 'package:smartgreenhouse_app/splash/splash.dart';
@@ -45,6 +46,9 @@ class App extends StatelessWidget {
             create: (context) => SensorValuesCubit(
               greenhouseRepository: greenhouseRepository,
             ),
+          ),
+          BlocProvider(
+            create: (context) => MenuCubit(),
           ),
         ],
         child: BlocListener<ParticlesCubit, ParticlesState>(
