@@ -26,8 +26,8 @@ dependencies:
 
   shared_preferences: ^0.5.12+4
 
-  bloc: ^6.1.0
-  flutter_bloc: ^6.0.6
+  bloc: ^6.1.1
+  flutter_bloc: ^6.1.1
   equatable: ^1.2.5
 
   formz: ^0.3.2

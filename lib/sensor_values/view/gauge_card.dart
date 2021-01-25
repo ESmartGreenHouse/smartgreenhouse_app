@@ -30,22 +30,22 @@ class GaugeCard extends StatelessWidget {
             iconData, size: 100.0,
             color: Colors.grey[300],
           ) : SizedBox(),
-          charts.PieChart(
-              <charts.Series<GaugeSegment, String>>[
-                charts.Series<GaugeSegment, String>(
-                  id: 'Segment',
-                  domainFn: (segment, _) => segment.segment,
-                  measureFn: (segment, _) => segment.size,
-                  colorFn: (segment, __) => segment.segment == 'value' ? charts.Color.fromHex(code: colorHex) : charts.Color.fromHex(code: colorHex).lighter.lighter.lighter.lighter.lighter.lighter.lighter,
-                  data: [GaugeSegment('value', value), GaugeSegment('empty', max - value)],
-                ),
-              ], 
-              defaultRenderer:charts. ArcRendererConfig(
-                arcWidth: 16,
-                startAngle: 4 / 5 * pi,
-                arcLength: 7 / 5 * pi
-              )
-            ),
+          value != null ? charts.PieChart(
+            <charts.Series<GaugeSegment, String>>[
+              charts.Series<GaugeSegment, String>(
+                id: 'Segment',
+                domainFn: (segment, _) => segment.segment,
+                measureFn: (segment, _) => segment.size,
+                colorFn: (segment, __) => segment.segment == 'value' ? charts.Color.fromHex(code: colorHex) : charts.Color.fromHex(code: colorHex).lighter.lighter.lighter.lighter.lighter.lighter.lighter,
+                data: [GaugeSegment('value', value), GaugeSegment('empty', max - value)],
+              ),
+            ], 
+            defaultRenderer:charts. ArcRendererConfig(
+              arcWidth: 16,
+              startAngle: 4 / 5 * pi,
+              arcLength: 7 / 5 * pi
+            )
+          ) : SizedBox(),
           Text(
             '${value ?? '-'} $unit',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24.0),
