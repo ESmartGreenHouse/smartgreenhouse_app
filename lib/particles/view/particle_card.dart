@@ -71,6 +71,10 @@ class ParticleCard extends StatelessWidget {
             title: Text('Sensors', style: TextStyle(fontWeight: FontWeight.bold)),
             subtitle: Text(particle.sensors.isNotEmpty ? particle.sensors.map<String>((e) => e.name.toString()).toList().join(', ') : 'No sensors found'),
           ),
+          ListTile(
+            title: Text('Actuators', style: TextStyle(fontWeight: FontWeight.bold)),
+            subtitle: Text(particle.actuators.isNotEmpty ? particle.actuators.map<String>((e) => e.name.toString()).toList().join(', ') : 'No actuators found'),
+          ),
         ],
       ),
     );
