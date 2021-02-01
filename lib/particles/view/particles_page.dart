@@ -25,15 +25,14 @@ class ParticlesPage extends StatelessWidget {
           IconButton(
             tooltip: 'Refresh Particles',
             icon: Icon(Icons.refresh),
-            onPressed: () => context.bloc<ParticlesCubit>().load(),
+            onPressed: () {
+              if (context.bloc<AuthenticationBloc>().state.user.isCloudLinked) {
+                context.bloc<ParticlesCubit>().syncParticleCloud();
+              } else {
+                context.bloc<ParticlesCubit>().load();
+              }
+            }
           ),
-          IconButton(
-            tooltip: 'Synchronize Particles',
-            icon: Icon(context.bloc<AuthenticationBloc>().state.user.isCloudLinked ? Icons.sync : Icons.sync_disabled),
-            disabledColor: GreenHouseColors.orange,
-            onPressed: context.bloc<AuthenticationBloc>().state.user.isCloudLinked ? () => context.bloc<ParticlesCubit>().syncParticleCloud() : null,
-          ),
-          ParticleCloudButton(),
         ],
       ),
       drawer: AppDrawer(),
