@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:responsive_scaffold/templates/layout/scaffold.dart';
-import 'package:smartgreenhouse_app/logout/logout.dart';
 import 'package:smartgreenhouse_app/menu/menu.dart';
 
 class TasksPage extends StatelessWidget {
@@ -15,10 +13,9 @@ class TasksPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ResponsiveScaffold(
-      title: Text('Tasks'),
+    return Scaffold(
+      appBar: AppBar(title: Text('Tasks')),
       drawer: AppDrawer(),
-      trailing: LogoutButton(),
       body: Center(child: Text('Tasks')),
     );
   }

@@ -26,8 +26,8 @@ dependencies:
 
   shared_preferences: ^0.5.12+4
 
-  bloc: ^6.1.0
-  flutter_bloc: ^6.0.6
+  bloc: ^6.1.1
+  flutter_bloc: ^6.1.1
   equatable: ^1.2.5
 
   formz: ^0.3.2
@@ -44,6 +44,8 @@ dependencies:
 
   hive: ^1.4.4+1
   hive_flutter: ^0.3.1
+
+  flutter_wall_layout: ^1.0.0
 
   authentication_repository:
     path: packages/authentication_repository

@@ -41,7 +41,12 @@ class GreenhouseRepository {
               'notes': device['notes'] as String,
               'sensors': (device['variables'] as Map<String, dynamic>)
                 .keys
-                .where((v) => v.contains('sensor'))
+                .where((v) => v.contains('sensor_'))
+                .map((v) => v.split('_')[1])
+                .toList(),
+              'actuators': (device['variables'] as Map<String, dynamic>)
+                .keys
+                .where((v) => v.contains('state_'))
                 .map((v) => v.split('_')[1])
                 .toList(),
             }, SetOptions(merge: true));
@@ -69,6 +74,7 @@ class GreenhouseRepository {
           isShared: d.data().containsKey('shared') ? d.get('shared') as bool ?? false : false,
           isOwned: true,
           sensors: (d.get('sensors') as List<dynamic>)?.map((s) => Sensor(name: s.toString()))?.toList() ?? [],
+          actuators: (d.get('actuators') as List<dynamic>)?.map((s) => Actuator(name: s.toString()))?.toList() ?? [],
         ))
         .toList();
 
@@ -84,6 +90,7 @@ class GreenhouseRepository {
           isShared: d.data().containsKey('shared') ? d.get('shared') as bool ?? false : false,
           isOwned: false,
           sensors: (d.get('sensors') as List<dynamic>)?.map((s) => Sensor(name: s.toString()))?.toList() ?? [],
+          actuators: (d.get('actuators') as List<dynamic>)?.map((s) => Actuator(name: s.toString()))?.toList() ?? [],
         ))
         .toList();
 
@@ -121,6 +128,40 @@ class GreenhouseRepository {
       }, options: Options(headers: { 'Authorization': 'Bearer ${await authenticationRepository.token}'}));
     } catch(e) {
       print(e);
+    }
+  }
+
+  Stream<Sensor> getSensorValuesOfParticle(Particle particle) async* {
+    for (final sensor in particle.sensors) {
+      try {
+        final response = await Dio().get('https://api.particle.io/v1/devices/${particle.id}/sensor_${sensor.name}',
+          options: Options(headers: { 'Authorization': 'Bearer ${await authenticationRepository.token}'}),
+        );
+        if (response.statusCode == 200) {
+          yield sensor.copyWith(value: response.data['result'] as double);
+        } else {
+          // TODO
+        }
+      } catch(e) {
+        print(e);
+      }
+    }
+  }
+
+  Stream<Actuator> getActuatorValuesOfParticle(Particle particle) async* {
+    for (final actuator in particle.actuators) {
+      try {
+        final response = await Dio().get('https://api.particle.io/v1/devices/${particle.id}/state_${actuator.name}',
+          options: Options(headers: { 'Authorization': 'Bearer ${await authenticationRepository.token}'}),
+        );
+        if (response.statusCode == 200) {
+          yield actuator.copyWith(value: response.data['result'] as bool);
+        } else {
+          // TODO
+        }
+      } catch(e) {
+        print(e);
+      }
     }
   }
 

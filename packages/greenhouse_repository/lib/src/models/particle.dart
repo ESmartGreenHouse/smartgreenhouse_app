@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:greenhouse_repository/greenhouse_repository.dart';
+import 'package:greenhouse_repository/src/models/actuator.dart';
 import 'package:meta/meta.dart';
 
 class Particle extends Equatable {
@@ -10,6 +11,7 @@ class Particle extends Equatable {
   final bool isShared;
   final bool isOwned;
   final List<Sensor> sensors;
+  final List<Actuator> actuators;
 
   Particle({
     @required this.id,
@@ -19,10 +21,11 @@ class Particle extends Equatable {
     this.isShared = false,
     this.isOwned = false,
     this.sensors = const [],
+    this.actuators = const [],
   });
 
   @override
-  List<Object> get props => [id, name, notes, lastHeard, isShared, isOwned, sensors];
+  List<Object> get props => [id, name, notes, lastHeard, isShared, isOwned, sensors, actuators];
 
   Particle copyWith({String name, String notes, bool isShared}) => Particle(
     id: id,
@@ -32,5 +35,6 @@ class Particle extends Equatable {
     isShared: isShared ?? this.isShared,
     isOwned: isOwned,
     sensors: sensors,
+    actuators: actuators,
   );
 }

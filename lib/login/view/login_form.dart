@@ -94,8 +94,8 @@ class _PasswordInput extends StatelessWidget {
           obscureText: true,
           decoration: InputDecoration(
             labelText: 'Password',
-            helperText: 'Please enter password\nMinimum eight characters, at least one letter and one number',
-            errorText: state.password.invalid ? 'Invalid password\nMinimum eight characters, at least one letter and one number' : null,
+            helperText: 'Please enter password',
+            errorText: state.password.invalid ? 'Invalid password' : null,
           ),
           onSubmitted: state.status.isValidated
             ? (_) => context.bloc<LoginCubit>().logInWithCredentials()
