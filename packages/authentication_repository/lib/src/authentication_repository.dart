@@ -60,6 +60,14 @@ class AuthenticationRepository {
 
   Future<void> unlink() async {
     try {
+      final doc = await _store.collection('users').doc(_auth.currentUser.uid).get();
+      if (doc.data().containsKey('cloud_integration_id')) {
+        final integrationId = doc.get('cloud_integration_id') as String;
+        await Dio().delete('https://api.particle.io/v1/integrations/$integrationId',
+          options: Options(headers: { 'Authorization': 'Bearer ${await token}' }),
+        );
+      }
+
       await _store.collection('users').doc(_auth.currentUser.uid).delete();
       await emitUser();
     } catch(e) {
@@ -90,19 +98,31 @@ class AuthenticationRepository {
       final accessToken = authResponse.data['access_token'] as String;
 
       if (authResponse.statusCode == 200) {
+
         final userResponse = await Dio().get('https://api.particle.io/v1/user',
           options: Options(headers: { 'Authorization': 'Bearer $accessToken'})
         );
 
-        if (userResponse.statusCode == 200) {
-          await _store.collection('users').doc(_auth.currentUser.uid).set({
-            'cloud_token': accessToken,
-            'cloud_username': userResponse.data['username'] as String,
-          });
-          await emitUser();
-        } else {
-          throw LinkParticleCloudFailure();
-        }
+        final integrationResponse = await Dio().post('https://api.particle.io/v1/integrations',
+          options: Options(headers: { 'Authorization': 'Bearer $accessToken'}),
+          data: {
+            'event': 'test1data',
+            'integration_type': 'Webhook',
+            'url': 'https://firestore.googleapis.com/v1/projects/isd-smartgreenhouse/databases/(default)/documents/data',
+            'requestType': 'POST',
+            'body': '{{{PARTICLE_EVENT_VALUE}}}',
+            'noDefaults': true,
+            'rejectUnauthorized': true
+          }
+        );
+
+        await _store.collection('users').doc(_auth.currentUser.uid).set({
+          'cloud_token': accessToken,
+          'cloud_username': userResponse.data['username'] as String,
+          'cloud_integration_id': integrationResponse.data['id'] as String,
+        });
+
+        await emitUser();
       } else {
         throw LinkParticleCloudFailure();
       }

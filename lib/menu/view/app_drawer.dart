@@ -7,6 +7,7 @@ import 'package:smartgreenhouse_app/logout/logout.dart';
 import 'package:smartgreenhouse_app/menu/menu.dart';
 import 'package:smartgreenhouse_app/particles/particles.dart';
 import 'package:smartgreenhouse_app/reports/reports.dart';
+import 'package:smartgreenhouse_app/settings/settings.dart';
 import 'package:smartgreenhouse_app/tasks/tasks.dart';
 import 'package:smartgreenhouse_app/theme.dart';
 
@@ -90,7 +91,7 @@ class AppDrawer extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.settings, color: GreenHouseColors.black),
             title: Text('Settings'),
-            onTap: () {},
+            onTap: () => Navigator.of(context).pushAndRemoveUntil<void>(SettingsPage.route(), (route) => false),
           ),
         ],
       ),
