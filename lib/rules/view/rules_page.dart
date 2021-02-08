@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:smartgreenhouse_app/menu/menu.dart';
+import 'package:smartgreenhouse_app/rules/rules.dart';
 
-class TasksPage extends StatelessWidget {
-  const TasksPage({Key key}) : super(key: key);
+class RulesPage extends StatelessWidget {
 
   static Route route() {
     return PageRouteBuilder<MaterialPageRoute<void>>(
-      pageBuilder: (_, __, ___) => TasksPage(),
+      pageBuilder: (_, __, ___) => RulesPage(),
       transitionDuration: Duration(seconds: 0),
     );
   }
@@ -14,9 +14,11 @@ class TasksPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Tasks')),
+      appBar: AppBar(
+        title: Text('Rules'),
+      ),
       drawer: AppDrawer(),
-      body: Center(child: Text('Tasks')),
+      body: RulesList(),
     );
   }
 }

@@ -8,7 +8,7 @@ import 'package:smartgreenhouse_app/menu/menu.dart';
 import 'package:smartgreenhouse_app/particles/particles.dart';
 import 'package:smartgreenhouse_app/reports/reports.dart';
 import 'package:smartgreenhouse_app/settings/settings.dart';
-import 'package:smartgreenhouse_app/tasks/tasks.dart';
+import 'package:smartgreenhouse_app/rules/rules.dart';
 import 'package:smartgreenhouse_app/theme.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -81,8 +81,8 @@ class AppDrawer extends StatelessWidget {
               if (state.showAdvancedFeatures) {
                 return ListTile(
                   leading: FaIcon(FontAwesomeIcons.cogs, color: GreenHouseColors.black),
-                  title: Text('Tasks'),
-                  onTap: () => Navigator.of(context).pushAndRemoveUntil<void>(TasksPage.route(), (route) => false),
+                  title: Text('Rules'),
+                  onTap: () => Navigator.of(context).pushAndRemoveUntil<void>(RulesPage.route(), (route) => false),
                 );
               }
               return Container();
