@@ -171,6 +171,12 @@ class GreenhouseRepository {
     }
   }
 
+  Future<void> setThreshold(Particle particle, Threshold threshold) async {
+    await Dio().post('https://api.particle.io/v1/devices/${particle.id}/set_thresh_${threshold.name}', data: {
+      'arg': threshold.value.toString(),
+    }, options: Options(headers: { 'Authorization': 'Bearer ${await authenticationRepository.token}'}));
+  }
+
   /// Returns the measured values of a sensor of a particle in the last hour.
   Future<List<Measurement>> getRecentMeasurement({
     @required Particle particle,

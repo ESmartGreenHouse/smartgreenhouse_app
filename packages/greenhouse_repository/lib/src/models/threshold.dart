@@ -15,6 +15,6 @@ class Threshold extends Equatable {
 
   Threshold copyWith({double value}) => Threshold(
     name: name,
-    value: value ?? this.value,
+    value: value,
   );
 }
