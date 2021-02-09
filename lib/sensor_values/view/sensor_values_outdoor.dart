@@ -109,14 +109,14 @@ class SensorValuesOutdoor extends StatelessWidget {
                 Builder(
                   builder: (context) => Text(
                     context.select((SensorValuesCubit cubit) => cubit.state.isRain) == true
-                      ? 'Rain'
-                      : 'Sun',
+                      ? 'YES'
+                      : 'NO',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24.0),
                   ),
                 ),
                 Padding(
                   padding: EdgeInsets.only(top: 80.0),
-                  child: Text('Weather', style: TextStyle(color: Colors.grey)),
+                  child: Text('Rain', style: TextStyle(color: Colors.grey)),
                 ),
               ],
             ),
