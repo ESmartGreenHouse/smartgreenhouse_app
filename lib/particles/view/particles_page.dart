@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:greenhouse_repository/greenhouse_repository.dart';
 import 'package:smartgreenhouse_app/authentication/authentication.dart';
 import 'package:smartgreenhouse_app/common/custom_grid.dart';
 import 'package:smartgreenhouse_app/menu/menu.dart';
@@ -8,14 +7,6 @@ import 'package:smartgreenhouse_app/particles/particles.dart';
 import 'package:smartgreenhouse_app/theme.dart';
 
 class ParticlesPage extends StatelessWidget {
-
-  static Route route() {
-    return PageRouteBuilder<MaterialPageRoute<void>>(
-      pageBuilder: (_, __, ___) => ParticlesPage(),
-      transitionDuration: Duration(seconds: 0),
-    );
-  }
-
   int _columnCount(Size size) {
     if (size.width > 2000) return 4;
     if (size.width > 1500) return 3;

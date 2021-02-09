@@ -7,14 +7,6 @@ import 'package:smartgreenhouse_app/reports_picker/reports_picker.dart';
 import 'package:smartgreenhouse_app/theme.dart';
 
 class ReportsPage extends StatelessWidget {
-
-  static Route route() {
-    return PageRouteBuilder<MaterialPageRoute<void>>(
-      pageBuilder: (_, __, ___) => ReportsPage(),
-      transitionDuration: Duration(seconds: 0),
-    );
-  }
-
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
