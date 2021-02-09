@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smartgreenhouse_app/menu/menu.dart';
 import 'package:smartgreenhouse_app/particle_cloud/particle_cloud.dart';
+import 'package:smartgreenhouse_app/rules/rules.dart';
 
 class SettingsPage extends StatelessWidget {
   @override
@@ -11,6 +12,7 @@ class SettingsPage extends StatelessWidget {
       body: ListView(
         children: [
           ParticleCloudTile(),
+          RulesResetTile(),
         ],
       ),
     );

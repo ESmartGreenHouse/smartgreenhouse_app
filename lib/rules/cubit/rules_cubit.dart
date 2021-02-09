@@ -30,6 +30,15 @@ class RulesCubit extends Cubit<RulesState> {
     }
   }
 
+  void reset() async {
+    final defaultThresholds = await greenhouseRepository.getDefaultThresholds();
+    if (defaultThresholds != null) {
+      for (final threshold in defaultThresholds) {
+        changeThreshold(threshold, threshold.value);
+      }
+    }
+  }
+
   void changeThreshold(Threshold threshold, double value) async {
     // Previous value is invalid until result
     _thresholdToState(threshold.copyWith(value: null));

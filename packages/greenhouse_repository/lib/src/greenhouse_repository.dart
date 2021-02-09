@@ -154,6 +154,22 @@ class GreenhouseRepository {
     }
   }
 
+  Future<List<Threshold>> getDefaultThresholds() async {
+    try {
+      final thresholds = <Threshold>[];
+
+      (await firestore.collection('config')
+        .doc('thresholds')
+        .get())
+        .data()
+        .forEach((key, value) => thresholds.add(Threshold(name: key, value: value as double)));
+
+      return thresholds;
+    } catch (e) {
+      print(e);
+    }
+  }
+
   Stream<Threshold> getThresholdValuesOfParticle(Particle particle) async* {
     for (final threshold in particle.thresholds) {
       try {
