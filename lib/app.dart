@@ -2,11 +2,13 @@ import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:greenhouse_repository/greenhouse_repository.dart';
+import 'package:smartgreenhouse_app/app_router.dart';
 import 'package:smartgreenhouse_app/authentication/authentication.dart';
 import 'package:smartgreenhouse_app/home/home.dart';
 import 'package:smartgreenhouse_app/login/login.dart';
 import 'package:smartgreenhouse_app/menu/menu.dart';
 import 'package:smartgreenhouse_app/particles/particles.dart';
+import 'package:smartgreenhouse_app/rules/rules.dart';
 import 'package:smartgreenhouse_app/sensor_values/sensor_values.dart';
 import 'package:smartgreenhouse_app/splash/splash.dart';
 import 'package:smartgreenhouse_app/theme.dart';
@@ -48,6 +50,11 @@ class App extends StatelessWidget {
             ),
           ),
           BlocProvider(
+            create: (context) => RulesCubit(
+              greenhouseRepository: greenhouseRepository,
+            ),
+          ),
+          BlocProvider(
             create: (context) => MenuCubit(),
           ),
         ],
@@ -55,6 +62,7 @@ class App extends StatelessWidget {
           listener: (context, state) {
             if (state is ParticlesLoadSuccess) {
               context.bloc<SensorValuesCubit>().load(state.particles);
+              context.bloc<RulesCubit>().load(state.particles);
             }
           },
           child: AppView(),
@@ -64,15 +72,9 @@ class App extends StatelessWidget {
   }
 }
 
-class AppView extends StatefulWidget {
-  @override
-  _AppViewState createState() => _AppViewState();
-}
-
-class _AppViewState extends State<AppView> {
+class AppView extends StatelessWidget {
+  final _router = AppRouter();
   final _navigatorKey = GlobalKey<NavigatorState>();
-
-  NavigatorState get _navigator => _navigatorKey.currentState;
 
   @override
   Widget build(BuildContext context) {
@@ -86,16 +88,10 @@ class _AppViewState extends State<AppView> {
             switch (state.status) {
               case AuthenticationStatus.authenticated:
                 context.bloc<ParticlesCubit>().syncParticleCloud();
-                _navigator.pushAndRemoveUntil<void>(
-                  HomePage.route(),
-                  (route) => false,
-                );
+                _navigatorKey.currentState.pushNamedAndRemoveUntil<void>(AppRoutes.home, (route) => false);
                 break;
               case AuthenticationStatus.unauthenticated:
-                _navigator.pushAndRemoveUntil<void>(
-                  LoginPage.route(),
-                  (route) => false,
-                );
+                _navigatorKey.currentState.pushNamedAndRemoveUntil<void>(AppRoutes.login, (route) => false);
                 break;
               default:
                 break;
@@ -104,7 +100,8 @@ class _AppViewState extends State<AppView> {
           child: child,
         );
       },
-      onGenerateRoute: (_) => SplashPage.route(),
+      initialRoute: AppRoutes.splash,
+      onGenerateRoute: _router.onGenerateRoute,
     );
   }
 }

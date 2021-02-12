@@ -9,10 +9,6 @@ class ParticleCloudPage extends StatelessWidget {
 
   ParticleCloudPage({@required this.isLinked});
 
-  static Route route({@required  bool isLinked}) {
-    return MaterialPageRoute<void>(builder: (_) => ParticleCloudPage(isLinked: isLinked));
-  }
-
   @override
   Widget build(BuildContext context) {
     return Theme(

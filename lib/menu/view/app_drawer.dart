@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:smartgreenhouse_app/app_router.dart';
 import 'package:smartgreenhouse_app/authentication/authentication.dart';
-import 'package:smartgreenhouse_app/home/home.dart';
 import 'package:smartgreenhouse_app/logout/logout.dart';
 import 'package:smartgreenhouse_app/menu/menu.dart';
-import 'package:smartgreenhouse_app/particles/particles.dart';
-import 'package:smartgreenhouse_app/reports/reports.dart';
-import 'package:smartgreenhouse_app/settings/settings.dart';
-import 'package:smartgreenhouse_app/tasks/tasks.dart';
 import 'package:smartgreenhouse_app/theme.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -50,7 +46,7 @@ class AppDrawer extends StatelessWidget {
           ListTile(
             leading: FaIcon(FontAwesomeIcons.home, color: GreenHouseColors.black),
             title: Text('Home'),
-            onTap: () => Navigator.of(context).pushAndRemoveUntil<void>(HomePage.route(), (route) => false),
+            onTap: () => Navigator.pushNamedAndRemoveUntil(context, AppRoutes.home, (route) => false),
           ),
           BlocBuilder<MenuCubit, MenuState>(
             builder: (context, state) {
@@ -58,7 +54,7 @@ class AppDrawer extends StatelessWidget {
                 return ListTile(
                   leading: FaIcon(FontAwesomeIcons.microchip, color: GreenHouseColors.black),
                   title: Text('Particles'),
-                  onTap: () => Navigator.of(context).pushAndRemoveUntil<void>(ParticlesPage.route(), (route) => false),
+                  onTap: () => Navigator.pushNamedAndRemoveUntil(context, AppRoutes.particles, (route) => false)
                 );
               }
               return Container();
@@ -70,7 +66,7 @@ class AppDrawer extends StatelessWidget {
                 return ListTile(
                   leading: FaIcon(FontAwesomeIcons.clipboardList, color: GreenHouseColors.black),
                   title: Text('Reports'),
-                  onTap: () => Navigator.of(context).pushAndRemoveUntil<void>(ReportsPage.route(), (route) => false),
+                  onTap: () => Navigator.pushNamedAndRemoveUntil(context, AppRoutes.reports, (route) => false),
                 );
               }
               return Container();
@@ -81,8 +77,8 @@ class AppDrawer extends StatelessWidget {
               if (state.showAdvancedFeatures) {
                 return ListTile(
                   leading: FaIcon(FontAwesomeIcons.cogs, color: GreenHouseColors.black),
-                  title: Text('Tasks'),
-                  onTap: () => Navigator.of(context).pushAndRemoveUntil<void>(TasksPage.route(), (route) => false),
+                  title: Text('Rules'),
+                  onTap: () => Navigator.pushNamedAndRemoveUntil(context, AppRoutes.rules, (route) => false),
                 );
               }
               return Container();
@@ -91,7 +87,7 @@ class AppDrawer extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.settings, color: GreenHouseColors.black),
             title: Text('Settings'),
-            onTap: () => Navigator.of(context).pushAndRemoveUntil<void>(SettingsPage.route(), (route) => false),
+            onTap: () => Navigator.pushNamedAndRemoveUntil(context, AppRoutes.settings, (route) => false),
           ),
         ],
       ),

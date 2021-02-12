@@ -49,6 +49,11 @@ class GreenhouseRepository {
                 .where((v) => v.contains('state_'))
                 .map((v) => v.split('_')[1])
                 .toList(),
+              'thresholds': (device['variables'] as Map<String, dynamic>)
+                .keys
+                .where((v) => v.contains('thresh_'))
+                .map((v) => v.split('_')[1])
+                .toList(),
             }, SetOptions(merge: true));
           }
         }
@@ -67,15 +72,7 @@ class GreenhouseRepository {
         .where('owner_uid', isEqualTo: (await authenticationRepository.currentUser).id)
         .get())
         .docs
-        .map((d) => Particle(
-          id: d.get('id') as String,
-          name: d.get('name') as String,
-          notes: d.get('notes') as String ?? '',
-          isShared: d.data().containsKey('shared') ? d.get('shared') as bool ?? false : false,
-          isOwned: true,
-          sensors: (d.get('sensors') as List<dynamic>)?.map((s) => Sensor(name: s.toString()))?.toList() ?? [],
-          actuators: (d.get('actuators') as List<dynamic>)?.map((s) => Actuator(name: s.toString()))?.toList() ?? [],
-        ))
+        .map((d) => Particle.fromQueryDocumentSnapshot(d, true))
         .toList();
 
       final sharedParticles = (await firestore.collection('particles')
@@ -83,15 +80,7 @@ class GreenhouseRepository {
         .where('shared', isEqualTo: true)
         .get())
         .docs
-        .map((d) => Particle(
-          id: d.get('id') as String,
-          name: d.get('name') as String,
-          notes: d.get('notes') as String ?? '',
-          isShared: d.data().containsKey('shared') ? d.get('shared') as bool ?? false : false,
-          isOwned: false,
-          sensors: (d.get('sensors') as List<dynamic>)?.map((s) => Sensor(name: s.toString()))?.toList() ?? [],
-          actuators: (d.get('actuators') as List<dynamic>)?.map((s) => Actuator(name: s.toString()))?.toList() ?? [],
-        ))
+        .map((d) => Particle.fromQueryDocumentSnapshot(d, false))
         .toList();
 
         return [...ownedParticles, ...sharedParticles];
@@ -163,6 +152,45 @@ class GreenhouseRepository {
         print(e);
       }
     }
+  }
+
+  Future<List<Threshold>> getDefaultThresholds() async {
+    try {
+      final thresholds = <Threshold>[];
+
+      (await firestore.collection('config')
+        .doc('thresholds')
+        .get())
+        .data()
+        .forEach((key, value) => thresholds.add(Threshold(name: key, value: value as double)));
+
+      return thresholds;
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Stream<Threshold> getThresholdValuesOfParticle(Particle particle) async* {
+    for (final threshold in particle.thresholds) {
+      try {
+        final response = await Dio().get('https://api.particle.io/v1/devices/${particle.id}/thresh_${threshold.name}',
+          options: Options(headers: { 'Authorization': 'Bearer ${await authenticationRepository.token}'}),
+        );
+        if (response.statusCode == 200) {
+          yield threshold.copyWith(value: response.data['result'] as double);
+        } else {
+          // TODO
+        }
+      } catch(e) {
+        print(e);
+      }
+    }
+  }
+
+  Future<void> setThreshold(Particle particle, Threshold threshold) async {
+    await Dio().post('https://api.particle.io/v1/devices/${particle.id}/set_thresh_${threshold.name}', data: {
+      'arg': threshold.value.toString(),
+    }, options: Options(headers: { 'Authorization': 'Bearer ${await authenticationRepository.token}'}));
   }
 
   /// Returns the measured values of a sensor of a particle in the last hour.

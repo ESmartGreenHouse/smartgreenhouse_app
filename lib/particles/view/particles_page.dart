@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:greenhouse_repository/greenhouse_repository.dart';
 import 'package:smartgreenhouse_app/authentication/authentication.dart';
+import 'package:smartgreenhouse_app/common/custom_grid.dart';
 import 'package:smartgreenhouse_app/menu/menu.dart';
-import 'package:smartgreenhouse_app/particle_cloud/particle_cloud.dart';
 import 'package:smartgreenhouse_app/particles/particles.dart';
 import 'package:smartgreenhouse_app/theme.dart';
 
 class ParticlesPage extends StatelessWidget {
-
-  static Route route() {
-    return PageRouteBuilder<MaterialPageRoute<void>>(
-      pageBuilder: (_, __, ___) => ParticlesPage(),
-      transitionDuration: Duration(seconds: 0),
-    );
+  int _columnCount(Size size) {
+    if (size.width > 2000) return 4;
+    if (size.width > 1500) return 3;
+    if (size.width > 1000) return 2;
+    return 1;
   }
 
   @override
@@ -41,11 +39,10 @@ class ParticlesPage extends StatelessWidget {
           if (state is ParticlesLoadSuccess) {
             return SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: _particleCards(state.particles, MediaQuery.of(context).size.width > 1000 ? 2 : 1),
+                padding: const EdgeInsets.all(8.0),
+                child: CustomGrid(
+                  columnCount: _columnCount(MediaQuery.of(context).size),
+                  children: state.particles.map((p) => ParticleCard(particle: p)).toList(),
                 ),
               ),
             );
@@ -66,30 +63,5 @@ class ParticlesPage extends StatelessWidget {
         },
       ),
     );
-  }
-
-  List<Widget> _particleCards(List<Particle> particles, [int columnCount = 1]) {
-    final result = <Widget>[];
-
-    for (int i = 0; i < particles.length; i = i + columnCount) {
-      if (columnCount == 1) {
-        result.add(ParticleCard(particle: particles.elementAt(i)));
-      } else {
-        final row = <Widget>[];
-
-        for (int j = 0; j < columnCount; j++) {
-          if ((i + j) < particles.length) {
-            row.add(Flexible(child: ParticleCard(particle: particles.elementAt(i + j))));
-          }
-        }
-
-        result.add(Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: row,
-        ));
-      }
-    }
-
-    return result;
   }
 }

@@ -27,7 +27,7 @@ service cloud.firestore {
   	}
 
     match /config/{document=**} {
-      allow read: if false
+      allow read: if request.auth != null
       allow write: if false
     }
   }

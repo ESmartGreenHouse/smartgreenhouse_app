@@ -13,7 +13,7 @@ class ParticleCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.all(16.0),
+      margin: EdgeInsets.all(8.0),
       child: Column(
         children: [
           ListTile(
@@ -74,6 +74,10 @@ class ParticleCard extends StatelessWidget {
           ListTile(
             title: Text('Actuators', style: TextStyle(fontWeight: FontWeight.bold)),
             subtitle: Text(particle.actuators.isNotEmpty ? particle.actuators.map<String>((e) => e.name.toString()).toList().join(', ') : 'No actuators found'),
+          ),
+          ListTile(
+            title: Text('Thresholds', style: TextStyle(fontWeight: FontWeight.bold)),
+            subtitle: Text(particle.thresholds.isNotEmpty ? particle.thresholds.map<String>((e) => e.name.toString()).toList().join(', ') : 'No thresholds found'),
           ),
         ],
       ),

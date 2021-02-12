@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:smartgreenhouse_app/menu/menu.dart';
 import 'package:smartgreenhouse_app/particle_cloud/particle_cloud.dart';
+import 'package:smartgreenhouse_app/rules/rules.dart';
 
 class SettingsPage extends StatelessWidget {
-  static Route route() {
-    return PageRouteBuilder<MaterialPageRoute<void>>(
-      pageBuilder: (_, __, ___) => SettingsPage(),
-      transitionDuration: Duration(seconds: 0),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,6 +12,7 @@ class SettingsPage extends StatelessWidget {
       body: ListView(
         children: [
           ParticleCloudTile(),
+          RulesResetTile(),
         ],
       ),
     );
