@@ -65,7 +65,7 @@ class RulesCubit extends Cubit<RulesState> {
       emit(state.copyWith(maxWindSpeed: threshold));
     } else if (threshold.name.contains('LowMoisture')) {
       emit(state.copyWith(minMoisture: threshold));
-    } else if (threshold.name.contains('LowMoisture')) {
+    } else if (threshold.name.contains('HighMoisture')) {
       emit(state.copyWith(maxMoisture: threshold));
     } else {
       print(threshold);
