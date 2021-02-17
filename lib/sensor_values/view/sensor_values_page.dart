@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smartgreenhouse_app/menu/menu.dart';
+import 'package:smartgreenhouse_app/particles/cubit/particles_cubit.dart';
+import 'package:smartgreenhouse_app/sensor_values/sensor_values.dart';
 import 'package:smartgreenhouse_app/sensor_values/view/sensor_values_indoor.dart';
 import 'package:smartgreenhouse_app/sensor_values/view/sensor_values_outdoor.dart';
 import 'package:smartgreenhouse_app/theme.dart';
@@ -22,7 +25,21 @@ class _SensorValuesPageState extends State<SensorValuesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('SmartGreenHouse')),
+      appBar: AppBar(
+        title: Text('SmartGreenHouse'),
+        actions: [
+          IconButton(
+            tooltip: 'Refresh values',
+            icon: Icon(Icons.refresh),
+            onPressed: () {
+              final state = context.read<ParticlesCubit>().state;
+              if (state is ParticlesLoadSuccess) {
+                context.bloc<SensorValuesCubit>().load(state.particles);
+              }
+            }
+          ),
+        ],
+      ),
       body: _widgets.elementAt(_index),
       bottomNavigationBar: BottomNavigationBar(
         items: [
