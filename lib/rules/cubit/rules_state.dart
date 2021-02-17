@@ -8,6 +8,7 @@ class RulesState extends Equatable {
   final Threshold maxWindSpeed;
   final Threshold minMoisture;
   final Threshold maxMoisture;
+  final Threshold daylight;
 
   const RulesState({
     this.particle,
@@ -16,6 +17,7 @@ class RulesState extends Equatable {
     this.maxWindSpeed,
     this.minMoisture,
     this.maxMoisture,
+    this.daylight,
   });
 
   @override
@@ -26,6 +28,7 @@ class RulesState extends Equatable {
     maxWindSpeed,
     minMoisture,
     maxMoisture,
+    daylight,
   ];
 
   RulesState copyWith({
@@ -34,6 +37,7 @@ class RulesState extends Equatable {
     Threshold maxWindSpeed,
     Threshold minMoisture,
     Threshold maxMoisture,
+    Threshold daylight,
   }) => RulesState(
     particle: particle,
     maxTemperature: maxTemperature ?? this.maxTemperature,
@@ -41,5 +45,6 @@ class RulesState extends Equatable {
     maxWindSpeed: maxWindSpeed ?? this.maxWindSpeed,
     minMoisture: minMoisture ?? this.minMoisture,
     maxMoisture: maxMoisture ?? this.maxMoisture,
+    daylight: daylight ?? this.daylight,
   );
 }

@@ -67,6 +67,8 @@ class RulesCubit extends Cubit<RulesState> {
       emit(state.copyWith(minMoisture: threshold));
     } else if (threshold.name.contains('HighMoisture')) {
       emit(state.copyWith(maxMoisture: threshold));
+    } else if (threshold.name.contains('DayLight')) {
+      emit(state.copyWith(daylight: threshold));
     } else {
       print(threshold);
     }
