@@ -42,7 +42,7 @@ class SensorValuesOutdoor extends StatelessWidget {
             builder: (context) => GaugeCard(
               name: 'Humidity',
               unit: '%',
-              value: context.select((SensorValuesCubit cubit) => cubit.state.outdoorTemperature),
+              value: context.select((SensorValuesCubit cubit) => cubit.state.outdoorHumidity),
               max: 100,
               colorHex: '#0069b4',
             ),

@@ -239,37 +239,37 @@ class RulesList extends StatelessWidget {
                     ),
                     ExpansionTile(
                       initiallyExpanded: true,
-                      title: Text('Turn on if'),
-                      leading: Icon(Icons.invert_colors),
+                      title: Text('Turn on if value is below'),
+                      subtitle: Text('Turn off if value is above'),
+                      leading: Icon(Icons.wb_sunny),
                       children: [
-                        ListTile(
-                          isThreeLine: true,
-                          title: Text('Low'),
-                          subtitle: Text('Brightness'),
-                          leading: Icon(Icons.nights_stay, color: GreenHouseColors.black),
-                          // trailing: IconButton(
-                          //   icon: Icon(Icons.edit),
-                          //   color: GreenHouseColors.black,
-                          //   onPressed: () {}
-                          // ),
-                        ),
-                      ],
-                    ),
-                    ExpansionTile(
-                      initiallyExpanded: true,
-                      title: Text('Turn off if'),
-                      leading: Icon(Icons.invert_colors_off),
-                      children: [
-                        ListTile(
-                          isThreeLine: true,
-                          title: Text('High'),
-                          subtitle: Text('Brightness'),
-                          leading: Icon(Icons.wb_sunny, color: GreenHouseColors.black),
-                          // trailing: IconButton(
-                          //   icon: Icon(Icons.edit),
-                          //   color: GreenHouseColors.black,
-                          //   onPressed: () {}
-                          // ),
+                        BlocBuilder<RulesCubit, RulesState>(
+                          buildWhen: (previous, current) => previous.daylight != current.daylight,
+                          builder: (context, state) => ListTile(
+                            isThreeLine: true,
+                            title: Text('${state.daylight?.value ?? '-'} %'),
+                            subtitle: Text('Brightness ${state.daylight?.value ?? '-'} %'),
+                            leading: Icon(Icons.nights_stay, color: GreenHouseColors.black),
+                            trailing: IconButton(
+                              icon: state.daylight?.value != null ? Icon(Icons.edit) : CircularProgressIndicator(),
+                              color: GreenHouseColors.black,
+                              onPressed: () async {
+                                if (state.daylight != null) {
+                                  final value = await showDialog<double>(context: context, builder: (_) => RulesDialog(
+                                    title: 'Brightness',
+                                    unit: '%',
+                                    value: state.daylight.value,
+                                    min: 0.0,
+                                    max: 100.0,
+                                    steps: 50,
+                                  ));
+                                  if (value != null) {
+                                    context.read<RulesCubit>().changeThreshold(state.daylight, value);
+                                  }
+                                }
+                              }
+                            ),
+                          ),
                         ),
                       ],
                     ),
